@@ -13,13 +13,8 @@
     "astro": "^4.16.18"
   },
   "devDependencies": {
-    "@fontsource/cinzel": "^5.1.0",
-    "@fontsource/playfair-display": "^5.1.0",
-    "@fontsource/marcellus": "^5.1.0",
     "@fontsource/fraunces": "^5.1.0",
-    "@fontsource/inter": "^5.1.0",
     "@fontsource/ibm-plex-mono": "^5.1.0",
-    "@fontsource/newsreader": "^5.1.0",
     "@fontsource/spectral": "^5.1.0"
   }
 }

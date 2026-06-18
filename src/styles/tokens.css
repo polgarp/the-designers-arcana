@@ -25,37 +25,13 @@
   --gap: clamp(0.75rem, 1.4vw, 1.25rem);
   --pad: clamp(1rem, 2.5vw, 2rem);
 
-  /* — Type defaults (overridden per system below) — */
-  --font-display: 'Cinzel', Georgia, serif;     /* wordmark, numerals */
-  --font-name: 'Playfair Display', Georgia, serif; /* card names */
-  --font-ui: 'IBM Plex Mono', ui-monospace, monospace; /* labels, chrome */
-  --font-italic: 'Newsreader', Georgia, serif;  /* the one human line */
-  --ui-tracking: 0.14em;
-  --name-tracking: 0.08em;
-}
-
-/* — Three candidate type systems (the style-tile decision gate) — */
-.sys-engraved {
-  --font-display: 'Cinzel', Georgia, serif;
-  --font-name: 'Playfair Display', Georgia, serif;
-  --font-ui: 'IBM Plex Mono', ui-monospace, monospace;
-  --font-italic: 'Newsreader', Georgia, serif;
-  --ui-tracking: 0.16em;
-  --name-tracking: 0.06em;
-}
-.sys-deco {
-  --font-display: 'Marcellus', Georgia, serif;
-  --font-name: 'Marcellus', Georgia, serif;
-  --font-ui: 'Inter', system-ui, sans-serif;
-  --font-italic: 'Newsreader', Georgia, serif;
-  --ui-tracking: 0.18em;
-  --name-tracking: 0.14em;
-}
-.sys-studio {
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-name: 'Fraunces', Georgia, serif;
-  --font-ui: 'IBM Plex Mono', ui-monospace, monospace;
-  --font-italic: 'Spectral', Georgia, serif;
+  /* — Type: "Studio Manual" voice (chosen on the style tile) —
+       Display + names: Fraunces · UI/labels/chrome: IBM Plex Mono ·
+       the one human line: Spectral Italic. */
+  --font-display: 'Fraunces', Georgia, serif;     /* wordmark, numerals */
+  --font-name: 'Fraunces', Georgia, serif;        /* card names, values */
+  --font-ui: 'IBM Plex Mono', ui-monospace, monospace; /* labels, chrome, nav */
+  --font-italic: 'Spectral', Georgia, serif;      /* flavor / human line */
   --ui-tracking: 0.12em;
   --name-tracking: 0.04em;
 }

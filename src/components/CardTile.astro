@@ -7,9 +7,10 @@ interface Props {
   numeral: string;        // "II", "ACE", "QUEEN", …
   suit?: string | null;   // pencils | mugs | cursors | pixels | null
   ready?: boolean;
-  artHref?: string;
+  artHref?: string | null;
+  href?: string;          // when set, the tile links to its detail page
 }
-const { name, numeral, suit = null, ready = false, artHref } = Astro.props;
+const { name, numeral, suit = null, ready = false, artHref, href } = Astro.props;
 
 const suitColor: Record<string, string> = {
   pencils: 'var(--mustard)',
@@ -18,9 +19,17 @@ const suitColor: Record<string, string> = {
   pixels: 'var(--oxblood)',
 };
 const accent = suit && suitColor[suit] ? suitColor[suit] : 'var(--house)';
+const Tag = href ? 'a' : 'article';
 ---
 
-<article class="tile" style={`--suit:${accent}`} data-ready={ready}>
+<Tag
+  class="tile"
+  style={`--suit:${accent}`}
+  data-ready={String(ready)}
+  data-arcana={suit ? 'minor' : 'major'}
+  data-suit={suit ?? 'none'}
+  href={href}
+>
   {ready && artHref ? (
     <img class="tile__plate" src={artHref} alt={name} loading="lazy" />
   ) : (
@@ -40,23 +49,31 @@ const accent = suit && suitColor[suit] ? suitColor[suit] : 'var(--house)';
         <line x1="150" y1="147" x2="150" y2="263" stroke="var(--ink-30)" stroke-width="0.75" stroke-dasharray="2 6" />
         <line x1="60" y1="300" x2="240" y2="300" stroke="var(--ink-30)" stroke-width="0.75" stroke-dasharray="1 5" />
         <!-- name plate -->
-        <rect x="40" y="372" width="220" height="34" rx="2" fill="none" stroke="var(--ink)" stroke-width="1" />
+        <rect x="32" y="358" width="236" height="52" rx="2" fill="none" stroke="var(--ink)" stroke-width="1" />
         <!-- suit accent cell -->
-        <line x1="135" y1="420" x2="165" y2="420" stroke="var(--suit)" stroke-width="3" />
+        <line x1="138" y1="426" x2="162" y2="426" stroke="var(--suit)" stroke-width="3" />
       </svg>
       <span class="tile__num t-display">{numeral}</span>
-      <span class="tile__name t-name">{name}</span>
       <span class="tile__await label">awaiting plate</span>
+      <span class="tile__name t-name">{name}</span>
     </div>
   )}
-</article>
+</Tag>
 
 <style>
   .tile {
     position: relative;
     aspect-ratio: 300 / 450;
     width: 100%;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 160ms ease, filter 160ms ease;
   }
+  a.tile { cursor: pointer; }
+  a.tile:hover { transform: translateY(-3px); }
+  a.tile:hover .frame > rect:first-of-type { stroke: var(--suit); }
+  a.tile:focus-visible { outline: 2px solid var(--house); outline-offset: 4px; }
   .tile__plate { width: 100%; height: 100%; object-fit: contain; display: block; }
   .tile__placeholder { position: absolute; inset: 0; }
   .frame { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -72,22 +89,27 @@ const accent = suit && suitColor[suit] ? suitColor[suit] : 'var(--house)';
   }
   .tile__name {
     position: absolute;
-    bottom: 9.5%;
-    left: 12%; right: 12%;
+    top: 79.6%;
+    height: 11.5%;
+    left: 8.5%; right: 8.5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     text-transform: uppercase;
     letter-spacing: var(--name-tracking);
-    line-height: 1.15;
-    font-size: clamp(0.62rem, 2cqw, 0.92rem);
+    line-height: 1.04;
+    font-size: clamp(0.5rem, 7cqw, 0.72rem);
     color: var(--ink);
+    overflow: hidden;
   }
   .tile__await {
     position: absolute;
-    bottom: 3.4%;
+    top: 11.5%;
     left: 0; right: 0;
     text-align: center;
-    font-size: 0.5rem;
-    letter-spacing: 0.2em;
+    font-size: 0.46rem;
+    letter-spacing: 0.18em;
     color: var(--ink-30);
   }
   .tile { container-type: inline-size; }

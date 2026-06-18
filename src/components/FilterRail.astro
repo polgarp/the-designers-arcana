@@ -1,0 +1,123 @@
+---
+// Left rail — filter the gallery by arcana / suit / readiness.
+// Pure client-side: toggles tile visibility via data-attributes.
+import { SUITS, suitOrderList } from '../config';
+
+const groups = [
+  {
+    key: 'arcana',
+    label: 'Arcana',
+    options: [
+      { v: 'all', t: 'All' },
+      { v: 'major', t: 'Major' },
+      { v: 'minor', t: 'Minor' },
+    ],
+  },
+  {
+    key: 'suit',
+    label: 'Suit',
+    options: [
+      { v: 'all', t: 'All' },
+      ...suitOrderList.map((s) => ({ v: s, t: SUITS[s].label, c: SUITS[s].color })),
+    ],
+  },
+  {
+    key: 'ready',
+    label: 'Status',
+    options: [
+      { v: 'all', t: 'All' },
+      { v: 'true', t: 'Illustrated' },
+      { v: 'false', t: 'Awaiting' },
+    ],
+  },
+];
+---
+
+<aside class="filters">
+  {groups.map((g) => (
+    <div class="filters__group" data-group={g.key}>
+      <span class="label">{g.label}</span>
+      <div class="filters__opts">
+        {g.options.map((o) => (
+          <button
+            type="button"
+            class="opt"
+            data-val={o.v}
+            aria-pressed={o.v === 'all' ? 'true' : 'false'}
+            style={(o as any).c ? `--dot:${(o as any).c}` : undefined}
+          >
+            {(o as any).c && <span class="opt__dot" aria-hidden="true"></span>}
+            {o.t}
+          </button>
+        ))}
+      </div>
+    </div>
+  ))}
+</aside>
+
+<script>
+  const state: Record<string, string> = { arcana: 'all', suit: 'all', ready: 'all' };
+  const tiles = Array.from(document.querySelectorAll<HTMLElement>('[data-arcana]'));
+  const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-section]'));
+
+  function apply() {
+    for (const t of tiles) {
+      const ok =
+        (state.arcana === 'all' || t.dataset.arcana === state.arcana) &&
+        (state.suit === 'all' || t.dataset.suit === state.suit) &&
+        (state.ready === 'all' || t.dataset.ready === state.ready);
+      t.style.display = ok ? '' : 'none';
+    }
+    // hide sections with no visible tiles
+    for (const s of sections) {
+      const any = s.querySelector<HTMLElement>('[data-arcana]:not([style*="display: none"])');
+      s.style.display = any ? '' : 'none';
+    }
+  }
+
+  document.querySelectorAll<HTMLElement>('.filters__group').forEach((group) => {
+    const key = group.dataset.group!;
+    group.querySelectorAll<HTMLButtonElement>('.opt').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        state[key] = btn.dataset.val!;
+        group.querySelectorAll('.opt').forEach((b) =>
+          b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'),
+        );
+        apply();
+      });
+    });
+  });
+</script>
+
+<style>
+  .filters { display: flex; flex-direction: column; gap: 1.4rem; }
+  .filters__group { display: flex; flex-direction: column; gap: 0.5rem; }
+  .filters__opts { display: flex; flex-direction: column; gap: 0.1rem; align-items: flex-start; }
+  .opt {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: none;
+    border: none;
+    padding: 0.2rem 0;
+    cursor: pointer;
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    letter-spacing: 0.02em;
+    color: var(--ink-60);
+    transition: color 120ms ease;
+  }
+  .opt:hover { color: var(--ink); }
+  .opt[aria-pressed='true'] { color: var(--ink); font-weight: 500; }
+  .opt[aria-pressed='true']::before {
+    content: '';
+    width: 14px; height: 1px;
+    background: var(--house);
+    display: inline-block;
+  }
+  .opt__dot {
+    width: 7px; height: 7px;
+    background: var(--dot, var(--ink-30));
+    display: inline-block;
+  }
+</style>
