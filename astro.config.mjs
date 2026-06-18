@@ -1,9 +1,10 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 
-// NOTE: `site` + `base` get set to the GitHub Pages path once the repo
-// exists (e.g. base: '/the-designers-arcana'). Left at root for local dev.
+// GitHub Pages project site: https://polgarp.github.io/the-designers-arcana/
+// All internal links/assets go through import.meta.env.BASE_URL so the
+// base path is honored in both dev and prod.
 export default defineConfig({
-  site: 'https://example.github.io',
-  // base: '/the-designers-arcana',
+  site: 'https://polgarp.github.io',
+  base: '/the-designers-arcana',
 });

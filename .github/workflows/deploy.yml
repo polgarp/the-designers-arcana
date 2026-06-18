@@ -1,0 +1,60 @@
+name: Deploy showcase to Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:        # manual "Run workflow"
+  schedule:
+    - cron: '17 6 * * *'    # daily rebuild (picks up newly-added cards)
+  repository_dispatch:
+    types: [content-updated] # optional: fired from product-design-tarot on art/data change
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# one deploy at a time; let an in-progress run finish
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout showcase
+        uses: actions/checkout@v4
+
+      - name: Checkout deck source (private)
+        uses: actions/checkout@v4
+        with:
+          repository: polgarp/product-design-tarot
+          token: ${{ secrets.CONTENT_REPO_TOKEN }}
+          path: content
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build (sync content -> share images -> astro)
+        env:
+          CONTENT_REPO_PATH: content
+        run: npm run build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
