@@ -6,7 +6,7 @@ import { progress } from '../lib/cards';
 import { withBase } from '../lib/url';
 ---
 
-<Layout title={`About — ${SITE.name}`}>
+<Layout title={`About · ${SITE.name}`}>
   <main class="shell">
     <WindowChrome>
       <div class="colwrap">
@@ -50,7 +50,7 @@ import { withBase } from '../lib/url';
         </div>
 
         <p class="colophon label">
-          Drawn &amp; written by Peter Polgar · {SITE.name} {SITE.version}
+          Created by <a class="colophon__link" href="https://polgarp.com" target="_blank" rel="noopener">Peter Polgar</a> · {SITE.name} {SITE.version}
         </p>
       </article>
       </div>
@@ -108,6 +108,8 @@ import { withBase } from '../lib/url';
     padding-top: 1.2rem;
     border-top: 1px solid var(--ink-30);
   }
+  .colophon__link { color: var(--house); text-decoration: none; border-bottom: 1px solid var(--house); }
+  .colophon__link:hover { opacity: 0.7; }
 
   @media (max-width: 520px) { .suits { grid-template-columns: 1fr; } }
 </style>

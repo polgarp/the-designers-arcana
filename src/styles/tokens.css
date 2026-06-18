@@ -34,6 +34,15 @@
   --font-italic: 'Spectral', Georgia, serif;      /* flavor / human line */
   --ui-tracking: 0.12em;
   --name-tracking: 0.04em;
+
+  /* — Type scale (one ladder; stop inventing sizes) — */
+  --fs-2xs: 0.625rem;   /* 10px · micro labels, chips */
+  --fs-xs:  0.75rem;    /* 12px · ui, captions, eyebrow */
+  --fs-sm:  0.875rem;   /* 14px · secondary text */
+  --fs-base: 1rem;      /* 16px · body / readings */
+  --fs-md:  1.25rem;    /* 20px · subhead, lead */
+  --fs-lg:  1.75rem;    /* 28px · section title */
+  --fs-xl:  clamp(2.1rem, 4.5vw, 3rem); /* card name / hero */
 }
 
 /* — Reset / base — */
@@ -67,7 +76,7 @@ body {
   font-family: var(--font-ui);
   text-transform: uppercase;
   letter-spacing: var(--ui-tracking);
-  font-size: 0.66rem;
+  font-size: var(--fs-2xs);
   color: var(--ink-60);
   font-weight: 500;
 }

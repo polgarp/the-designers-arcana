@@ -92,11 +92,21 @@ function chips(card) {
   );
 }
 
+const SITE_URL = 'polgarp.com/the-designers-arcana';
+
 const wordmark = () =>
   h('div', { style: { display: 'flex', alignItems: 'center', gap: 10 } },
     h('div', { style: { display: 'flex', width: 12, height: 12, background: C.house, transform: 'rotate(45deg)' } }),
     h('div', { style: { fontFamily: 'Fraunces', fontSize: 22, letterSpacing: 3, textTransform: 'uppercase', color: C.ink } }, "The Designer's Arcana"),
   );
+
+// A labelled reading block for the portrait info-image.
+function readBlock(name, text) {
+  return h('div', { style: { display: 'flex', flexDirection: 'column', gap: 6 } },
+    h('div', { style: { fontFamily: 'Plex', fontSize: 17, letterSpacing: 3, textTransform: 'uppercase', color: C.house } }, name),
+    h('div', { style: { fontFamily: 'Fraunces', fontSize: 25, color: C.ink, lineHeight: 1.38 } }, text),
+  );
+}
 
 function ogTree(card) {
   return h('div', {
@@ -115,15 +125,27 @@ function ogTree(card) {
 
 function portraitTree(card) {
   return h('div', {
-    style: { width: 1080, height: 1350, display: 'flex', flexDirection: 'column', background: C.cream, padding: 72, alignItems: 'center', gap: 30 },
+    style: { width: 1080, height: 1350, display: 'flex', flexDirection: 'column', background: C.cream, padding: 64, gap: 20 },
   },
-    h('div', { style: { display: 'flex', marginTop: 8 } }, cardEl(card, 470, 705)),
-    h('div', { style: { fontFamily: 'Fraunces', fontWeight: 600, fontSize: 60, color: C.ink, textAlign: 'center', marginTop: 8 } }, card.name),
-    label(`${card.traditional_name}${card.arcana === 'major' ? ' · Major Arcana' : ''}`, C.house),
-    h('div', { style: { fontFamily: 'Fraunces', fontSize: 30, color: C.ink, lineHeight: 1.5, textAlign: 'center', maxWidth: 820 } }, card.upright_meaning),
-    h('div', { style: { display: 'flex', justifyContent: 'center' } }, chips(card)),
+    // header: card + name, centered
+    h('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 } },
+      cardEl(card, 320, 480),
+      h('div', { style: { fontFamily: 'Fraunces', fontWeight: 600, fontSize: 52, color: C.ink, textAlign: 'center' } }, card.name),
+      h('div', { style: { fontFamily: 'Plex', fontSize: 18, letterSpacing: 3, textTransform: 'uppercase', color: C.house, textAlign: 'center' } },
+        `${card.traditional_name}${card.arcana === 'major' ? ' · Major Arcana' : ''}`),
+    ),
+    // readings
+    h('div', { style: { display: 'flex', flexDirection: 'column', gap: 16, borderTop: `1px solid ${C.ink30}`, paddingTop: 20, marginTop: 4 } },
+      readBlock('Upright', card.upright_meaning),
+      readBlock('Reversed', card.reversed_meaning),
+      h('div', { style: { fontFamily: 'Spectral', fontStyle: 'italic', fontSize: 26, color: C.ink60, lineHeight: 1.4 } }, card.flavor_text),
+    ),
     h('div', { style: { display: 'flex', flex: 1 } }),
-    wordmark(),
+    // footer: wordmark + the page link
+    h('div', { style: { display: 'flex', flexDirection: 'column', gap: 8, borderTop: `1px solid ${C.ink}`, paddingTop: 18 } },
+      wordmark(),
+      h('div', { style: { fontFamily: 'Plex', fontSize: 18, color: C.ink60 } }, `${SITE_URL}/cards/${card.id}`),
+    ),
   );
 }
 

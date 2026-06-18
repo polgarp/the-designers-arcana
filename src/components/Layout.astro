@@ -7,6 +7,7 @@ import '@fontsource/ibm-plex-mono/400.css';
 import '@fontsource/ibm-plex-mono/500.css';
 import '@fontsource/spectral/400-italic.css';
 import '../styles/tokens.css';
+import { ViewTransitions } from 'astro:transitions';
 
 import { SITE } from '../config';
 
@@ -44,6 +45,8 @@ const {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     {image && <meta name="twitter:image" content={image} />}
+
+    <ViewTransitions />
   </head>
   <body>
     <slot />

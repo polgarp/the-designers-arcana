@@ -18,7 +18,7 @@ const sections: { title: string; sub: string; cards: Card[] }[] = [
 ];
 ---
 
-<Layout title={`${SITE.name} — the deck`}>
+<Layout title={`${SITE.name} · ${SITE.tagline}`}>
   <main class="shell">
     <WindowChrome>
       <div class="gallery">
@@ -42,6 +42,7 @@ const sections: { title: string; sub: string; cards: Card[] }[] = [
                     artHref={c.artHref}
                     backHref={c.backHref}
                     href={withBase(`cards/${c.id}/`)}
+                    transitionName={`card-${c.id}`}
                   />
                 ))}
               </div>

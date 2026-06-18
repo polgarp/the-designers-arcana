@@ -1,10 +1,9 @@
 ---
 import Layout from '../../components/Layout.astro';
 import WindowChrome from '../../components/WindowChrome.astro';
-import ReadingLayout from '../../components/ReadingLayout.astro';
-import ShareBar from '../../components/ShareBar.astro';
+import CardTile from '../../components/CardTile.astro';
 import { detailCards, type Card } from '../../lib/cards';
-import { SITE } from '../../config';
+import { SITE, SUITS } from '../../config';
 import { withBase } from '../../lib/url';
 
 export function getStaticPaths() {
@@ -24,14 +23,14 @@ const canonical = new URL(withBase(`cards/${card.id}/`), Astro.site).href;
 const ogImg = new URL(withBase(`og/${card.id}.png`), Astro.site).href;
 const shareImg = withBase(`share/${card.id}.png`);
 
-const traditional =
-  card.arcana === 'major'
-    ? `${card.traditional_name} · Major Arcana`
-    : `${card.traditional_name}`;
+const arcanaLabel = card.arcana === 'major' ? 'Major Arcana' : SUITS[card.suit!].label;
+const sub = card.domain
+  ? `after ${card.traditional_name} · ${card.domain}`
+  : `after ${card.traditional_name}`;
 ---
 
 <Layout
-  title={`${card.name} — ${SITE.name}`}
+  title={`${card.name} · ${SITE.name}`}
   description={card.upright_meaning}
   image={ogImg}
   canonical={canonical}
@@ -40,22 +39,57 @@ const traditional =
     <WindowChrome>
       <a class="back" href={withBase()}>← All cards</a>
 
-      <ReadingLayout card={card} />
+      <header class="chead">
+        <span class="chead__eyebrow label">{arcanaLabel} · {card.numeral}</span>
+        <h1 class="chead__name t-name">{card.name}</h1>
+        <p class="chead__sub t-italic">{sub}</p>
+      </header>
 
-      <section class="why">
-        <span class="label">Why this card</span>
-        <p class="why__body t-name">{card.fit_rationale}</p>
-      </section>
+      <div class="cbody">
+        <figure class="cbody__art">
+          <CardTile
+            name={card.name}
+            suit={card.suit}
+            ready={card.ready}
+            artHref={card.artHref}
+            backHref={card.backHref}
+            transitionName={`card-${card.id}`}
+          />
+          <ul class="kw">
+            {card.keywords.map((k, i) => <li class:list={['kw__chip', { 'kw__chip--lead': i === 0 }]}>{k}</li>)}
+          </ul>
+        </figure>
 
-      <div class="actions">
-        <ShareBar
-          name={card.name}
-          ready={card.ready}
-          artHref={card.artHref}
-          shareImg={shareImg}
-          url={canonical}
-        />
+        <div class="cbody__read">
+          <div class="rblock">
+            <span class="label">Upright</span>
+            <p class="rblock__body">{card.upright_meaning}</p>
+          </div>
+          <div class="rblock">
+            <span class="label">Reversed</span>
+            <p class="rblock__body">{card.reversed_meaning}</p>
+          </div>
+          <blockquote class="flavor">
+            <span class="flavor__mark" aria-hidden="true">✦</span>
+            <p class="t-italic">{card.flavor_text}</p>
+          </blockquote>
+
+          <section class="why">
+            <span class="label">Why this card</span>
+            <p class="why__body t-name">{card.fit_rationale}</p>
+          </section>
+        </div>
       </div>
+
+      {card.ready && (
+        <aside class="share">
+          <img class="share__img" src={shareImg} alt={`${card.name} — shareable card`} width="220" height="275" loading="lazy" />
+          <div class="share__copy">
+            <span class="label">Share this card</span>
+            <p class="share__hint">Right-click or long-press to save the image — the page link travels with it.</p>
+          </div>
+        </aside>
+      )}
 
       <nav class="pager">
         <a class="pager__link" href={withBase(`cards/${prev.id}/`)}>
@@ -75,44 +109,117 @@ const traditional =
   .back {
     display: inline-block;
     font-family: var(--font-ui);
-    font-size: 0.7rem;
+    font-size: var(--fs-xs);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--ink-60);
     text-decoration: none;
-    margin-bottom: 1.6rem;
+    margin-bottom: 2rem;
   }
   .back:hover { color: var(--house); }
 
+  /* — title block — */
+  .chead { margin-bottom: 2.4rem; }
+  .chead__eyebrow { display: block; margin-bottom: 0.7rem; }
+  .chead__name {
+    font-size: var(--fs-xl);
+    font-weight: 600;
+    line-height: 1.02;
+    letter-spacing: 0.01em;
+    margin: 0;
+    color: var(--ink);
+  }
+  .chead__sub {
+    margin: 0.5rem 0 0;
+    font-size: var(--fs-md);
+    color: var(--ink-60);
+  }
+
+  /* — body: big card + readings — */
+  .cbody {
+    display: grid;
+    grid-template-columns: clamp(240px, 30vw, 340px) 1fr;
+    gap: clamp(1.6rem, 4vw, 3.4rem);
+    align-items: start;
+  }
+  .cbody__art { margin: 0; display: flex; flex-direction: column; gap: 1.1rem; }
+  .kw { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .kw__chip {
+    font-family: var(--font-ui);
+    font-size: var(--fs-2xs);
+    letter-spacing: 0.04em;
+    color: var(--ink-60);
+    border: 1px solid var(--ink-30);
+    border-radius: 999px;
+    padding: 0.2rem 0.6rem;
+  }
+  .kw__chip--lead { color: var(--house); border-color: var(--house); }
+
+  .cbody__read { display: flex; flex-direction: column; gap: 1.6rem; }
+  .rblock { display: flex; flex-direction: column; gap: 0.4rem; }
+  .rblock__body {
+    margin: 0;
+    font-family: var(--font-name);
+    font-size: var(--fs-base);
+    line-height: 1.6;
+    color: var(--ink);
+    max-width: 54ch;
+  }
+  .flavor {
+    margin: 0.4rem 0 0;
+    padding-top: 1.3rem;
+    border-top: 1px solid var(--ink-30);
+    display: flex;
+    gap: 0.7rem;
+  }
+  .flavor__mark { color: var(--house); font-size: var(--fs-sm); line-height: 1.7; }
+  .flavor p { margin: 0; font-size: var(--fs-md); line-height: 1.5; color: var(--ink-60); max-width: 46ch; }
+
+  /* — why (sits at the foot of the readings column) — */
   .why {
-    margin-top: 2.4rem;
-    padding-top: 1.4rem;
+    margin-top: 0.4rem;
+    padding-top: 1.3rem;
     border-top: 1px solid var(--ink-30);
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    max-width: 68ch;
+    gap: 0.6rem;
   }
-  .why__body { margin: 0; font-size: 0.96rem; line-height: 1.6; color: var(--ink); }
+  .why__body { margin: 0; font-size: var(--fs-sm); line-height: 1.6; color: var(--ink-60); max-width: 60ch; }
 
-  .actions { margin-top: 2rem; }
+  /* — share preview — */
+  .share {
+    margin-top: 2.4rem;
+    display: flex;
+    align-items: center;
+    gap: 1.4rem;
+  }
+  .share__img { display: block; border: 1px solid var(--ink-30); height: auto; }
+  .share__copy { display: flex; flex-direction: column; gap: 0.5rem; }
+  .share__hint {
+    margin: 0;
+    font-family: var(--font-ui);
+    font-size: var(--fs-xs);
+    line-height: 1.5;
+    color: var(--ink-60);
+    max-width: 30ch;
+  }
 
+  /* — pager — */
   .pager {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
-    margin-top: 2.6rem;
+    margin-top: 2.8rem;
     padding-top: 1.4rem;
     border-top: 1px solid var(--ink);
   }
-  .pager__link {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    text-decoration: none;
-    color: var(--ink);
-  }
+  .pager__link { display: flex; flex-direction: column; gap: 0.25rem; text-decoration: none; color: var(--ink); }
   .pager__link--next { text-align: right; }
-  .pager__name { font-size: 0.95rem; }
+  .pager__name { font-size: var(--fs-sm); }
   .pager__link:hover .pager__name { color: var(--house); }
+
+  @media (max-width: 720px) {
+    .cbody { grid-template-columns: 1fr; }
+    .cbody__art { max-width: 300px; }
+  }
 </style>
