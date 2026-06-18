@@ -1,0 +1,94 @@
+---
+// A card. When `ready` (art SVG exists) it shows the composed plate;
+// otherwise a code-authored Deco placeholder that also showcases the
+// display/name typography. Suit drives the single accent cell.
+interface Props {
+  name: string;
+  numeral: string;        // "II", "ACE", "QUEEN", …
+  suit?: string | null;   // pencils | mugs | cursors | pixels | null
+  ready?: boolean;
+  artHref?: string;
+}
+const { name, numeral, suit = null, ready = false, artHref } = Astro.props;
+
+const suitColor: Record<string, string> = {
+  pencils: 'var(--mustard)',
+  mugs: 'var(--teal)',
+  cursors: 'var(--slate)',
+  pixels: 'var(--oxblood)',
+};
+const accent = suit && suitColor[suit] ? suitColor[suit] : 'var(--house)';
+---
+
+<article class="tile" style={`--suit:${accent}`} data-ready={ready}>
+  {ready && artHref ? (
+    <img class="tile__plate" src={artHref} alt={name} loading="lazy" />
+  ) : (
+    <div class="tile__placeholder">
+      <svg class="frame" viewBox="0 0 300 450" preserveAspectRatio="none" aria-hidden="true">
+        <rect x="7" y="7" width="286" height="436" rx="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="2" />
+        <rect x="14" y="14" width="272" height="422" rx="3" fill="none" stroke="var(--ink)" stroke-width="1" />
+        <!-- corner steps -->
+        <path d="M26 40 V26 H40 M260 26 H274 V40 M274 410 V424 H260 M40 424 H26 V410"
+              fill="none" stroke="var(--ink)" stroke-width="1" />
+        <!-- numeral underscore -->
+        <line x1="120" y1="62" x2="180" y2="62" stroke="var(--ink)" stroke-width="1" />
+        <!-- center motif: compass + measured horizon (computed repetition) -->
+        <circle cx="150" cy="205" r="48" fill="none" stroke="var(--ink-30)" stroke-width="1" />
+        <path d="M150 168 L161 205 L150 242 L139 205 Z" fill="none" stroke="var(--ink-30)" stroke-width="1" />
+        <line x1="92" y1="205" x2="208" y2="205" stroke="var(--ink-30)" stroke-width="0.75" stroke-dasharray="2 6" />
+        <line x1="150" y1="147" x2="150" y2="263" stroke="var(--ink-30)" stroke-width="0.75" stroke-dasharray="2 6" />
+        <line x1="60" y1="300" x2="240" y2="300" stroke="var(--ink-30)" stroke-width="0.75" stroke-dasharray="1 5" />
+        <!-- name plate -->
+        <rect x="40" y="372" width="220" height="34" rx="2" fill="none" stroke="var(--ink)" stroke-width="1" />
+        <!-- suit accent cell -->
+        <line x1="135" y1="420" x2="165" y2="420" stroke="var(--suit)" stroke-width="3" />
+      </svg>
+      <span class="tile__num t-display">{numeral}</span>
+      <span class="tile__name t-name">{name}</span>
+      <span class="tile__await label">awaiting plate</span>
+    </div>
+  )}
+</article>
+
+<style>
+  .tile {
+    position: relative;
+    aspect-ratio: 300 / 450;
+    width: 100%;
+  }
+  .tile__plate { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .tile__placeholder { position: absolute; inset: 0; }
+  .frame { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  .tile__num {
+    position: absolute;
+    top: 4.2%;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: clamp(0.8rem, 2.4cqw, 1.2rem);
+    letter-spacing: 0.12em;
+    color: var(--ink);
+  }
+  .tile__name {
+    position: absolute;
+    bottom: 9.5%;
+    left: 12%; right: 12%;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: var(--name-tracking);
+    line-height: 1.15;
+    font-size: clamp(0.62rem, 2cqw, 0.92rem);
+    color: var(--ink);
+  }
+  .tile__await {
+    position: absolute;
+    bottom: 3.4%;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 0.5rem;
+    letter-spacing: 0.2em;
+    color: var(--ink-30);
+  }
+  .tile { container-type: inline-size; }
+</style>

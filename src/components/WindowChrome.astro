@@ -1,0 +1,102 @@
+---
+// The "desktop-app-window" frame — the card border, made into UI chrome.
+// Double navy rule, brandmark left, window marks right, hairline under.
+interface Props {
+  brand?: string;
+  version?: string;
+  tagline?: string;
+}
+const {
+  brand = "The Designer's Arcana",
+  version = 'v0.1',
+  tagline = 'A working designer’s tarot.',
+} = Astro.props;
+---
+
+<section class="window">
+  <header class="bar">
+    <div class="brand">
+      <svg class="lozenge" viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M8 1 L15 8 L8 15 L1 8 Z" fill="none" stroke="var(--house)" stroke-width="1.2" />
+        <path d="M8 4.5 L11.5 8 L8 11.5 L4.5 8 Z" fill="var(--house)" />
+      </svg>
+      <span class="brand__name t-display">{brand}</span>
+      <span class="brand__ver">{version}</span>
+      <span class="brand__sep" aria-hidden="true">/</span>
+      <span class="brand__tag t-italic">{tagline}</span>
+    </div>
+    <div class="marks" aria-hidden="true">
+      <svg viewBox="0 0 12 12"><line x1="2" y1="6" x2="10" y2="6" /></svg>
+      <svg viewBox="0 0 12 12"><rect x="2.5" y="2.5" width="7" height="7" fill="none" /></svg>
+      <svg viewBox="0 0 12 12"><line x1="3" y1="3" x2="9" y2="9" /><line x1="9" y1="3" x2="3" y2="9" /></svg>
+    </div>
+  </header>
+  <div class="rule" aria-hidden="true"></div>
+  <div class="window__body">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .window {
+    position: relative;
+    background: var(--cream);
+    border: var(--rule) solid var(--ink);
+    padding: clamp(0.9rem, 2vw, 1.5rem);
+  }
+  /* second, inset rule → Deco double-line */
+  .window::after {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border: var(--hairline) solid var(--ink);
+    pointer-events: none;
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.1rem 0.4rem 0.7rem;
+  }
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    min-width: 0;
+  }
+  .lozenge { width: 16px; height: 16px; align-self: center; flex: none; }
+  .brand__name {
+    font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+    letter-spacing: var(--name-tracking);
+    color: var(--ink);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .brand__ver {
+    font-family: var(--font-ui);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    color: var(--house);
+    text-transform: uppercase;
+  }
+  .brand__sep { color: var(--ink-30); font-family: var(--font-ui); }
+  .brand__tag {
+    font-size: 0.82rem;
+    color: var(--ink-60);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .marks { display: flex; gap: 0.7rem; flex: none; }
+  .marks svg {
+    width: 12px; height: 12px;
+    stroke: var(--ink-60); stroke-width: 1.1;
+  }
+  .rule { height: var(--hairline); background: var(--ink); opacity: 0.85; }
+  .window__body { padding-top: clamp(1rem, 2.4vw, 1.8rem); }
+
+  @media (max-width: 640px) {
+    .brand__sep, .brand__tag { display: none; }
+  }
+</style>

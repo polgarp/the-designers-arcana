@@ -1,0 +1,87 @@
+/* ============================================================
+   The Designer's Arcana — design tokens
+   Palette locked from product-design-tarot/public/cards/style-bible.md
+   ============================================================ */
+
+:root {
+  /* — Palette (enamel doctrine: cream ground untreated, navy line
+       everywhere, accents only as small cells) — */
+  --cream: #efe8da;        /* ground, never filled over */
+  --paper: #f3eee2;        /* card surface, a hair lighter */
+  --ink: #1b2233;          /* primary line — never pure black */
+  --ink-60: #5a6072;       /* muted ink for annotations */
+  --ink-30: #a7a394;       /* faint rules, ticks */
+
+  --mustard: #d9a441;      /* Pencils */
+  --teal: #3f7a5f;         /* Mugs */
+  --slate: #6b89a8;        /* Cursors */
+  --oxblood: #7a2d2d;      /* Pixels + house/chrome accent */
+
+  --house: var(--oxblood); /* chrome accent (tunable) */
+
+  /* — Spatial system — */
+  --hairline: 1px;
+  --rule: 1.5px;
+  --gap: clamp(0.75rem, 1.4vw, 1.25rem);
+  --pad: clamp(1rem, 2.5vw, 2rem);
+
+  /* — Type defaults (overridden per system below) — */
+  --font-display: 'Cinzel', Georgia, serif;     /* wordmark, numerals */
+  --font-name: 'Playfair Display', Georgia, serif; /* card names */
+  --font-ui: 'IBM Plex Mono', ui-monospace, monospace; /* labels, chrome */
+  --font-italic: 'Newsreader', Georgia, serif;  /* the one human line */
+  --ui-tracking: 0.14em;
+  --name-tracking: 0.08em;
+}
+
+/* — Three candidate type systems (the style-tile decision gate) — */
+.sys-engraved {
+  --font-display: 'Cinzel', Georgia, serif;
+  --font-name: 'Playfair Display', Georgia, serif;
+  --font-ui: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-italic: 'Newsreader', Georgia, serif;
+  --ui-tracking: 0.16em;
+  --name-tracking: 0.06em;
+}
+.sys-deco {
+  --font-display: 'Marcellus', Georgia, serif;
+  --font-name: 'Marcellus', Georgia, serif;
+  --font-ui: 'Inter', system-ui, sans-serif;
+  --font-italic: 'Newsreader', Georgia, serif;
+  --ui-tracking: 0.18em;
+  --name-tracking: 0.14em;
+}
+.sys-studio {
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-name: 'Fraunces', Georgia, serif;
+  --font-ui: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-italic: 'Spectral', Georgia, serif;
+  --ui-tracking: 0.12em;
+  --name-tracking: 0.04em;
+}
+
+/* — Reset / base — */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* — Type voices — */
+.t-display { font-family: var(--font-display); }
+.t-name { font-family: var(--font-name); }
+.t-ui { font-family: var(--font-ui); }
+.t-italic { font-family: var(--font-italic); font-style: italic; }
+
+.label {
+  font-family: var(--font-ui);
+  text-transform: uppercase;
+  letter-spacing: var(--ui-tracking);
+  font-size: 0.66rem;
+  color: var(--ink-60);
+  font-weight: 500;
+}
