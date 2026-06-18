@@ -23,10 +23,13 @@ const canonical = new URL(withBase(`cards/${card.id}/`), Astro.site).href;
 const ogImg = new URL(withBase(`og/${card.id}.png`), Astro.site).href;
 const shareImg = withBase(`share/${card.id}.png`);
 
+// Minor names carry a "Three of Pencils — " rank/suit prefix that the
+// eyebrow already states; show only the proper name.
+const cleanName = (n: string) => n.split(' — ').at(-1)!;
 const arcanaLabel = card.arcana === 'major' ? 'Major Arcana' : SUITS[card.suit!].label;
-const sub = card.domain
-  ? `after ${card.traditional_name} · ${card.domain}`
-  : `after ${card.traditional_name}`;
+// Subtitle points to the real tarot card it descends from (not the suit
+// domain, which only repeats the eyebrow's suit name).
+const sub = `after ${card.traditional_name}`;
 
 // Small directional slide for the reading text on prev/next. Clipped to
 // the scroll column, so nothing travels past the frame or below the fold.
@@ -58,7 +61,7 @@ const slideText = {
           <div class="read" transition:animate={slideText}>
             <header class="chead">
               <span class="chead__eyebrow label">{arcanaLabel} · {card.numeral}</span>
-              <h1 class="chead__name t-name">{card.name}</h1>
+              <h1 class="chead__name t-name">{cleanName(card.name)}</h1>
               <p class="chead__sub t-italic">{sub}</p>
             </header>
 
@@ -92,8 +95,8 @@ const slideText = {
               backHref={card.backHref}
               transitionName={`card-${card.id}`}
             />
-            <ul class="kw">
-              {card.keywords.map((k, i) => <li class:list={['kw__chip', { 'kw__chip--lead': i === 0 }]}>{k}</li>)}
+            <ul class="kw" aria-label="Keywords">
+              {card.keywords.map((k, i) => <li class:list={['kw__word', { 'kw__word--lead': i === 0 }]}>{k}</li>)}
             </ul>
 
             {card.ready && (
@@ -112,16 +115,31 @@ const slideText = {
       <nav slot="footer" class="pager" aria-label="Card navigation">
         <a class="pager__link" href={withBase(`cards/${prev.id}/`)} data-pager="prev" rel="prev">
           <span class="label">Prev</span>
-          <span class="pager__name t-name">← {prev.name}</span>
+          <span class="pager__name t-name">← {cleanName(prev.name)}</span>
         </a>
         <a class="pager__link pager__link--next" href={withBase(`cards/${next.id}/`)} data-pager="next" rel="next">
           <span class="label">Next</span>
-          <span class="pager__name t-name">{next.name} →</span>
+          <span class="pager__name t-name">{cleanName(next.name)} →</span>
         </a>
       </nav>
     </WindowChrome>
   </main>
 </Layout>
+
+<script>
+  // Fade the reading column's top edge in only once it's scrolled.
+  function initReadFade() {
+    const read = document.querySelector<HTMLElement>('.read');
+    if (!read) return;
+    const update = () => read.toggleAttribute('data-scrolled', read.scrollTop > 6);
+    read.addEventListener('scroll', update, { passive: true });
+    update();
+  }
+  if (!(window as any).__readFadeInit) {
+    (window as any).__readFadeInit = true;
+    document.addEventListener('astro:page-load', initReadFade);
+  }
+</script>
 
 <style>
   .detail { display: flex; flex-direction: column; flex: 1; min-height: 0; }
@@ -155,10 +173,14 @@ const slideText = {
     display: flex;
     flex-direction: column;
     gap: 1.6rem;
-    /* fade the content only as it meets the bottom edge (near the pager) */
-    mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 30px), transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 30px), transparent 100%);
+    /* always fade the bottom edge (near the pager); the top fades in only
+       once scrolled, via --top-fade toggled by data-scrolled */
+    --top-fade: 0px;
+    transition: --top-fade 0.18s ease;
+    mask-image: linear-gradient(to bottom, transparent 0, #000 var(--top-fade), #000 calc(100% - 30px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 var(--top-fade), #000 calc(100% - 30px), transparent 100%);
   }
+  .read[data-scrolled] { --top-fade: 18px; }
   .read > * { max-width: 58ch; }
 
   .chead { display: flex; flex-direction: column; }
@@ -185,18 +207,21 @@ const slideText = {
 
   /* — right card column: stays put — */
   .cardcol { display: flex; flex-direction: column; gap: 1.1rem; align-self: start; }
-  .kw { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 0.4rem; }
-  .kw__chip {
+  /* keywords as quiet metadata, not interactive pills */
+  .kw { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.15rem 0; }
+  .kw__word {
     font-family: var(--font-ui);
     font-size: var(--fs-2xs);
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     color: var(--ink-60);
-    border: 1px solid var(--ink-30);
-    border-radius: 999px;
-    padding: 0.2rem 0.6rem;
-    line-height: 1.4;
   }
-  .kw__chip--lead { color: var(--house); border-color: var(--house); }
+  .kw__word:not(:last-child)::after {
+    content: '·';
+    margin: 0 0.5rem;
+    color: var(--ink-30);
+  }
+  .kw__word--lead { color: var(--house); }
 
   .share { margin: 0.4rem 0 0; display: flex; gap: 0.9rem; align-items: flex-start; padding-top: 1.1rem; border-top: 1px solid var(--ink-30); }
   .share__img { display: block; border: 1px solid var(--ink-30); height: auto; flex: none; }

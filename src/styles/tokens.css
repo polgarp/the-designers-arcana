@@ -82,6 +82,13 @@ body {
   border: 0;
 }
 
+/* animatable length so the reading column's top fade can ease in on scroll */
+@property --top-fade {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
 /* — Subtle directional slide for prev/next (small travel + fade, so it
      reads as paging without flinging content past the frame) — */
 @keyframes da-out-left  { to   { transform: translateX(-26px); opacity: 0; } }
