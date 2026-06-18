@@ -21,7 +21,7 @@ const sections: { title: string; sub: string; cards: Card[] }[] = [
 
 <Layout title={`${SITE.name} — the deck`}>
   <main class="shell">
-    <WindowChrome nav>
+    <WindowChrome>
       <div class="gallery">
         <FilterRail />
 
@@ -38,10 +38,10 @@ const sections: { title: string; sub: string; cards: Card[] }[] = [
                 {sec.cards.map((c) => (
                   <CardTile
                     name={c.name}
-                    numeral={c.numeral}
                     suit={c.suit}
                     ready={c.ready}
                     artHref={c.artHref}
+                    backHref={c.backHref}
                     href={`${base}cards/${c.id}/`}
                   />
                 ))}

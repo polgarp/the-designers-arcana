@@ -1,26 +1,22 @@
 ---
-// The "desktop-app-window" frame — the card border, made into UI chrome.
-// Double navy rule, brandmark left, window marks right, hairline under.
-import { NAV } from '../config';
-
+// The "desktop-app-window" frame — the card border made into UI chrome.
+// Double navy rule, brandmark (links home) left, About link right.
 interface Props {
   brand?: string;
   version?: string;
   tagline?: string;
-  nav?: boolean;
 }
 const {
   brand = "The Designer's Arcana",
   version = 'v0.1',
   tagline = 'A working designer’s tarot.',
-  nav = false,
 } = Astro.props;
 const base = import.meta.env.BASE_URL;
 ---
 
 <section class="window">
   <header class="bar">
-    <div class="brand">
+    <a class="brand" href={base}>
       <svg class="lozenge" viewBox="0 0 16 16" aria-hidden="true">
         <path d="M8 1 L15 8 L8 15 L1 8 Z" fill="none" stroke="var(--house)" stroke-width="1.2" />
         <path d="M8 4.5 L11.5 8 L8 11.5 L4.5 8 Z" fill="var(--house)" />
@@ -29,27 +25,10 @@ const base = import.meta.env.BASE_URL;
       <span class="brand__ver">{version}</span>
       <span class="brand__sep" aria-hidden="true">/</span>
       <span class="brand__tag t-italic">{tagline}</span>
-    </div>
-    <div class="marks" aria-hidden="true">
-      <svg viewBox="0 0 12 12"><line x1="2" y1="6" x2="10" y2="6" /></svg>
-      <svg viewBox="0 0 12 12"><rect x="2.5" y="2.5" width="7" height="7" fill="none" /></svg>
-      <svg viewBox="0 0 12 12"><line x1="3" y1="3" x2="9" y2="9" /><line x1="9" y1="3" x2="3" y2="9" /></svg>
-    </div>
+    </a>
+    <a class="about" href={`${base}about/`}>About</a>
   </header>
   <div class="rule" aria-hidden="true"></div>
-  {nav && (
-    <nav class="nav">
-      {NAV.map((item) =>
-        item.soon ? (
-          <span class="nav__item nav__item--soon">
-            {item.label}<span class="nav__soon">soon</span>
-          </span>
-        ) : (
-          <a class="nav__item is-active" href={base} aria-current="page">{item.label}</a>
-        ),
-      )}
-    </nav>
-  )}
   <div class="window__body">
     <slot />
   </div>
@@ -82,6 +61,7 @@ const base = import.meta.env.BASE_URL;
     align-items: baseline;
     gap: 0.6rem;
     min-width: 0;
+    text-decoration: none;
   }
   .lozenge { width: 16px; height: 16px; align-self: center; flex: none; }
   .brand__name {
@@ -106,44 +86,21 @@ const base = import.meta.env.BASE_URL;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .marks { display: flex; gap: 0.7rem; flex: none; }
-  .marks svg {
-    width: 12px; height: 12px;
-    stroke: var(--ink-60); stroke-width: 1.1;
-  }
-  .rule { height: var(--hairline); background: var(--ink); opacity: 0.85; }
-
-  .nav {
-    display: flex;
-    gap: 1.6rem;
-    padding: 0.7rem 0.4rem 0;
-  }
-  .nav__item {
+  .about {
+    flex: none;
     font-family: var(--font-ui);
     text-transform: uppercase;
     letter-spacing: 0.14em;
     font-size: 0.66rem;
     color: var(--ink-60);
     text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
+    padding-bottom: 2px;
+    border-bottom: 1px solid transparent;
+    transition: color 140ms ease, border-color 140ms ease;
   }
-  .nav__item.is-active { color: var(--ink); position: relative; }
-  .nav__item.is-active::after {
-    content: '';
-    position: absolute; left: 0; right: 0; bottom: -0.5rem;
-    height: 1px; background: var(--house);
-  }
-  .nav__item--soon { color: var(--ink-30); cursor: default; }
-  .nav__soon {
-    font-size: 0.5rem;
-    letter-spacing: 0.1em;
-    border: 1px solid var(--ink-30);
-    border-radius: 999px;
-    padding: 0.05rem 0.3rem;
-  }
+  .about:hover { color: var(--house); border-bottom-color: var(--house); }
 
+  .rule { height: var(--hairline); background: var(--ink); opacity: 0.85; }
   .window__body { padding-top: clamp(1rem, 2.4vw, 1.8rem); }
 
   @media (max-width: 640px) {

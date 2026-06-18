@@ -13,7 +13,8 @@ interface Card {
   flavor_text: string;
   keywords: string[];
   ready?: boolean;
-  artHref?: string;
+  artHref?: string | null;
+  backHref?: string | null;
 }
 const { card } = Astro.props as { card: Card };
 const arcanaLabel =
@@ -55,10 +56,10 @@ const arcanaLabel =
   <div class="stage">
     <CardTile
       name={card.name}
-      numeral={card.numeral}
       suit={card.suit}
       ready={card.ready}
       artHref={card.artHref}
+      backHref={card.backHref}
     />
   </div>
 

@@ -1,0 +1,35 @@
+---
+// Fallback card back (suit-neutral, 180°-symmetric, per the deck's
+// backside doctrine). Used for un-illustrated cards until a real
+// _back.svg is synced from the source repo.
+---
+<svg class="back" viewBox="0 0 300 450" preserveAspectRatio="none" aria-hidden="true">
+  <rect x="7" y="7" width="286" height="436" rx="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="2" />
+  <rect x="14" y="14" width="272" height="422" rx="3" fill="none" stroke="var(--ink)" stroke-width="1" />
+  <!-- corner steps -->
+  <path d="M26 40 V26 H40 M260 26 H274 V40 M274 410 V424 H260 M40 424 H26 V410"
+        fill="none" stroke="var(--ink)" stroke-width="1" />
+
+  <!-- central emblem, symmetric under 180° about (150,225) -->
+  <g stroke="var(--ink)" fill="none">
+    <circle cx="150" cy="225" r="84" stroke-width="0.8" stroke-dasharray="1.5 7" />
+    <circle cx="150" cy="225" r="70" stroke-width="1.2" />
+    <circle cx="150" cy="225" r="54" stroke-width="0.8" />
+    <!-- crossed compass diamonds -->
+    <path d="M150 161 L168 225 L150 289 L132 225 Z" stroke-width="1.2" />
+    <path d="M86 225 L150 207 L214 225 L150 243 Z" stroke-width="1.2" />
+    <!-- inner lozenge -->
+    <path d="M150 199 L161 225 L150 251 L139 225 Z" stroke-width="0.8" />
+  </g>
+  <circle cx="150" cy="225" r="4.5" fill="var(--house)" />
+
+  <!-- crown ticks, mirrored top & bottom -->
+  <g stroke="var(--ink-30)" stroke-width="0.8">
+    <line x1="150" y1="118" x2="150" y2="132" />
+    <line x1="150" y1="318" x2="150" y2="332" />
+  </g>
+</svg>
+
+<style>
+  .back { position: absolute; inset: 0; width: 100%; height: 100%; }
+</style>

@@ -3,16 +3,17 @@ import Layout from '../../components/Layout.astro';
 import WindowChrome from '../../components/WindowChrome.astro';
 import ReadingLayout from '../../components/ReadingLayout.astro';
 import ShareBar from '../../components/ShareBar.astro';
-import { ordered, type Card } from '../../lib/cards';
+import { detailCards, type Card } from '../../lib/cards';
 import { SITE } from '../../config';
 
 export function getStaticPaths() {
-  return ordered.map((card, i) => ({
+  const list = detailCards;
+  return list.map((card, i) => ({
     params: { id: card.id },
     props: {
       card,
-      prev: ordered[(i - 1 + ordered.length) % ordered.length],
-      next: ordered[(i + 1) % ordered.length],
+      prev: list[(i - 1 + list.length) % list.length],
+      next: list[(i + 1) % list.length],
     },
   }));
 }
@@ -36,7 +37,7 @@ const traditional =
   canonical={canonical}
 >
   <main class="shell">
-    <WindowChrome nav>
+    <WindowChrome>
       <a class="back" href={base}>← All cards</a>
 
       <ReadingLayout card={card} />

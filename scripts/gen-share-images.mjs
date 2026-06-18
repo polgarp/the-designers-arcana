@@ -133,16 +133,23 @@ async function render(tree, width, height, outPath) {
   writeFileSync(outPath, png);
 }
 
+import { rmSync } from 'node:fs';
+
 const cards = JSON.parse(readFileSync(join(root, 'src/data/cards.json'), 'utf8')).cards;
 const ogDir = join(root, 'public/og');
 const shareDir = join(root, 'public/share');
+// Wipe stale output so secret (un-illustrated) cards never keep an image.
+rmSync(ogDir, { recursive: true, force: true });
+rmSync(shareDir, { recursive: true, force: true });
 mkdirSync(ogDir, { recursive: true });
 mkdirSync(shareDir, { recursive: true });
 
+// Only illustrated cards get share images (the rest stay secret).
+const ready = cards.filter((c) => existsSync(join(root, 'public/cards/art', `${c.id}.svg`)));
 let n = 0;
-for (const card of cards) {
+for (const card of ready) {
   await render(ogTree(card), 1200, 630, join(ogDir, `${card.id}.png`));
   await render(portraitTree(card), 1080, 1350, join(shareDir, `${card.id}.png`));
   n++;
 }
-console.log(`✓ generated ${n * 2} share images (${n} cards)`);
+console.log(`✓ generated ${n * 2} share images (${n} illustrated card(s))`);

@@ -27,9 +27,3 @@ export const COURT_SENIORITY: Record<string, string> = {
   queen: 'staff IC',
   king: 'manager / director',
 };
-
-export const NAV = [
-  { label: 'Gallery', href: '', active: true },
-  { label: 'Reading', href: '', soon: true },
-  { label: 'Get the deck', href: '', soon: true },
-];

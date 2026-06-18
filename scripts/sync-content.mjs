@@ -44,3 +44,14 @@ if (existsSync(srcArt)) {
   }
 }
 console.log(`✓ ${copied} card art SVG(s) → public/cards/art/`);
+
+// 3. the shared card back, if the source provides one (_back.svg)
+const srcBack = join(srcArt, '_back.svg');
+const dstBack = join(root, 'public', 'cards', 'back.svg');
+if (existsSync(srcBack)) {
+  await copyFile(srcBack, dstBack);
+  console.log(`✓ card back → public/cards/back.svg`);
+} else {
+  await rm(dstBack, { force: true });
+  console.log(`· no _back.svg in source — using built-in card back`);
+}

@@ -23,6 +23,7 @@ export interface Card extends RawCard {
   numeral: string;       // display numeral: "II", "ACE", "QUEEN", "0"…
   ready: boolean;        // a finished art SVG exists
   artHref: string | null;
+  backHref: string | null; // synced _back.svg, if present (else inline back)
   domain: string | null; // suit domain, for the rail
 }
 
@@ -30,6 +31,11 @@ const deck = raw as { deck: any; cards: RawCard[] };
 
 const ART_DIR = join(process.cwd(), 'public', 'cards', 'art');
 const BASE = import.meta.env.BASE_URL; // honors GitHub Pages base path
+
+// One shared card back for the whole deck (synced from source _back.svg).
+const backHref = existsSync(join(process.cwd(), 'public', 'cards', 'back.svg'))
+  ? `${BASE}cards/back.svg`
+  : null;
 
 const ROMAN: [number, string][] = [
   [10, 'X'], [9, 'IX'], [8, 'VIII'], [7, 'VII'], [6, 'VI'],
@@ -62,6 +68,7 @@ function decorate(c: RawCard): Card {
     numeral: numeralFor(c),
     ready,
     artHref: ready ? `${BASE}cards/art/${c.id}.svg` : null,
+    backHref,
     domain: c.suit ? SUITS[c.suit].domain : null,
   };
 }
@@ -96,3 +103,10 @@ export const ordered: Card[] = [
   ...majors,
   ...suitOrder.flatMap((s) => minorsBySuit[s]),
 ];
+
+// Which cards get a detail page. Production: only illustrated cards, so an
+// un-illustrated card has no URL and stays secret. Dev: all, so the layout
+// can be reviewed before any art exists.
+export const detailCards: Card[] = import.meta.env.DEV
+  ? ordered
+  : ordered.filter((c) => c.ready);

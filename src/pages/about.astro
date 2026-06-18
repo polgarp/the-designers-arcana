@@ -1,0 +1,110 @@
+---
+import Layout from '../components/Layout.astro';
+import WindowChrome from '../components/WindowChrome.astro';
+import { SITE, SUITS, suitOrderList } from '../config';
+import { progress } from '../lib/cards';
+---
+
+<Layout title={`About — ${SITE.name}`}>
+  <main class="shell">
+    <WindowChrome>
+      <a class="back" href={import.meta.env.BASE_URL}>← All cards</a>
+
+      <article class="about">
+        <p class="lead t-italic">
+          A tarot for people who ship. Seventy-eight cards for the parts of
+          product design no one warns you about.
+        </p>
+
+        <div class="prose">
+          <p>
+            The major arcana is a career, told as an arc — from
+            <em>The Junior</em>, opening a blank Figma file with infinite
+            optimism, to <em>The Promotion</em>, which may or may not arrive.
+            The minor arcana is the daily work, split across four suits.
+          </p>
+
+          <dl class="suits">
+            {suitOrderList.map((s) => (
+              <div class="suit">
+                <dt class="suit__name t-name" style={`--c:${SUITS[s].color}`}>{SUITS[s].label}</dt>
+                <dd class="suit__domain">{SUITS[s].domain}</dd>
+              </div>
+            ))}
+          </dl>
+
+          <p>
+            Each card pairs a classic divination symbol with a modern product
+            artifact, held with a straight face — a crescent moon over a chat
+            bubble, a sunburst behind a status dashboard. You read the ceremony
+            first and the joke second.
+          </p>
+
+          <p class="reveal">
+            The deck is illustrated one plate at a time. Right now
+            <strong>{progress.all.ready} of {progress.all.total}</strong> cards
+            are revealed; the rest wait face-down. Check back as the deck fills in.
+          </p>
+        </div>
+
+        <p class="colophon label">
+          Drawn &amp; written by Peter Polgar · {SITE.name} {SITE.version}
+        </p>
+      </article>
+    </WindowChrome>
+  </main>
+</Layout>
+
+<style>
+  .shell { max-width: 760px; margin: 0 auto; padding: clamp(1rem, 3vw, 2.5rem); }
+  .back {
+    display: inline-block;
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-60);
+    text-decoration: none;
+    margin-bottom: 2rem;
+  }
+  .back:hover { color: var(--house); }
+
+  .lead {
+    font-size: clamp(1.4rem, 3.4vw, 2rem);
+    line-height: 1.3;
+    color: var(--ink);
+    margin: 0 0 2rem;
+    max-width: 22ch;
+  }
+  .prose p { font-family: var(--font-name); font-size: 1.02rem; line-height: 1.65; color: var(--ink); max-width: 60ch; }
+  .prose em { font-style: italic; }
+
+  .suits {
+    margin: 2rem 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem 2rem;
+  }
+  .suit { display: flex; flex-direction: column; gap: 0.2rem; }
+  .suit__name {
+    font-size: 1.05rem; color: var(--ink); position: relative; padding-left: 1rem;
+  }
+  .suit__name::before {
+    content: ''; position: absolute; left: 0; top: 0.55em;
+    width: 8px; height: 8px; background: var(--c);
+  }
+  .suit__domain {
+    margin: 0; padding-left: 1rem;
+    font-family: var(--font-ui); font-size: 0.74rem; letter-spacing: 0.02em; color: var(--ink-60);
+  }
+
+  .reveal strong { color: var(--house); font-weight: 600; }
+
+  .colophon {
+    margin-top: 2.6rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--ink-30);
+  }
+
+  @media (max-width: 520px) { .suits { grid-template-columns: 1fr; } }
+</style>
