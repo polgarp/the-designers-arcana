@@ -41,6 +41,12 @@ const {
     background: var(--cream);
     border: var(--rule) solid var(--ink);
     padding: clamp(0.9rem, 2vw, 1.5rem);
+    /* the frame fills the viewport (an app window) so per-page footers —
+       e.g. the card pager — land at a consistent place regardless of how
+       much content sits above them */
+    min-height: calc(100svh - 2 * clamp(1rem, 3vw, 2.5rem));
+    display: flex;
+    flex-direction: column;
   }
   /* second, inset rule → Deco double-line */
   .window::after {
@@ -102,7 +108,12 @@ const {
   .about:hover { color: var(--house); border-bottom-color: var(--house); }
 
   .rule { height: var(--hairline); background: var(--ink); opacity: 0.85; }
-  .window__body { padding-top: clamp(1rem, 2.4vw, 1.8rem); }
+  .window__body {
+    padding-top: clamp(1rem, 2.4vw, 1.8rem);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
 
   @media (max-width: 640px) {
     .brand__sep, .brand__tag { display: none; }

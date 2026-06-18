@@ -52,3 +52,24 @@ const {
     <slot />
   </body>
 </html>
+
+<script>
+  // Give prev/next navigation a direction so the slide transition reverses:
+  // clicking "next" slides forward, "prev" slides back.
+  let pagerDir: string | null = null;
+  document.addEventListener(
+    'click',
+    (e) => {
+      const a = (e.target as HTMLElement)?.closest?.('[data-pager]') as HTMLElement | null;
+      pagerDir = a ? a.dataset.pager ?? null : null;
+    },
+    true,
+  );
+  document.addEventListener('astro:before-preparation', (e: any) => {
+    if (pagerDir === 'prev') e.direction = 'back';
+    else if (pagerDir === 'next') e.direction = 'forward';
+  });
+  document.addEventListener('astro:after-swap', () => {
+    pagerDir = null;
+  });
+</script>

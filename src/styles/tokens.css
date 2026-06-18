@@ -66,6 +66,22 @@ body {
   padding: clamp(1rem, 3vw, 2.5rem);
 }
 
+/* — a11y: visible keyboard focus + screen-reader-only text — */
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2px solid var(--house);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* — Type voices — */
 .t-display { font-family: var(--font-display); }
 .t-name { font-family: var(--font-name); }

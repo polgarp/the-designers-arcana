@@ -28,6 +28,7 @@ const Tag = linkable ? 'a' : 'div';
   data-arcana={suit ? 'minor' : 'major'}
   data-suit={suit ?? 'none'}
   href={linkable ? href : undefined}
+  role={linkable ? undefined : 'img'}
   aria-label={ready ? name : 'Unrevealed card'}
   transition:name={transitionName}
 >

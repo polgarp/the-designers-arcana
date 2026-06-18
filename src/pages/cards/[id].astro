@@ -5,6 +5,7 @@ import CardTile from '../../components/CardTile.astro';
 import { detailCards, type Card } from '../../lib/cards';
 import { SITE, SUITS } from '../../config';
 import { withBase } from '../../lib/url';
+import { slide } from 'astro:transitions';
 
 export function getStaticPaths() {
   const list = detailCards;
@@ -39,6 +40,7 @@ const sub = card.domain
     <WindowChrome>
       <a class="back" href={withBase()}>← All cards</a>
 
+      <div class="detail" transition:animate={slide({ duration: '0.32s' })}>
       <header class="chead">
         <span class="chead__eyebrow label">{arcanaLabel} · {card.numeral}</span>
         <h1 class="chead__name t-name">{card.name}</h1>
@@ -91,21 +93,23 @@ const sub = card.domain
         </aside>
       )}
 
-      <nav class="pager">
-        <a class="pager__link" href={withBase(`cards/${prev.id}/`)}>
+      <nav class="pager" aria-label="Card navigation">
+        <a class="pager__link" href={withBase(`cards/${prev.id}/`)} data-pager="prev" rel="prev">
           <span class="label">Prev</span>
           <span class="pager__name t-name">← {prev.name}</span>
         </a>
-        <a class="pager__link pager__link--next" href={withBase(`cards/${next.id}/`)}>
+        <a class="pager__link pager__link--next" href={withBase(`cards/${next.id}/`)} data-pager="next" rel="next">
           <span class="label">Next</span>
           <span class="pager__name t-name">{next.name} →</span>
         </a>
       </nav>
+      </div>
     </WindowChrome>
   </main>
 </Layout>
 
 <style>
+  .detail { display: flex; flex-direction: column; flex: 1; }
   .back {
     display: inline-block;
     font-family: var(--font-ui);
@@ -209,7 +213,7 @@ const sub = card.domain
     display: flex;
     justify-content: space-between;
     gap: 1rem;
-    margin-top: 2.8rem;
+    margin-top: auto;        /* sit at the foot of the (viewport-tall) frame */
     padding-top: 1.4rem;
     border-top: 1px solid var(--ink);
   }
