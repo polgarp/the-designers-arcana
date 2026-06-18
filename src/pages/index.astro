@@ -6,8 +6,7 @@ import CardTile from '../components/CardTile.astro';
 import ProgressStrip from '../components/ProgressStrip.astro';
 import { majors, minorsBySuit, suitOrder, type Card } from '../lib/cards';
 import { SITE, SUITS } from '../config';
-
-const base = import.meta.env.BASE_URL;
+import { withBase } from '../lib/url';
 
 const sections: { title: string; sub: string; cards: Card[] }[] = [
   { title: 'Major Arcana', sub: 'The career, as an arc — 0 to XXI.', cards: majors },
@@ -42,7 +41,7 @@ const sections: { title: string; sub: string; cards: Card[] }[] = [
                     ready={c.ready}
                     artHref={c.artHref}
                     backHref={c.backHref}
-                    href={`${base}cards/${c.id}/`}
+                    href={withBase(`cards/${c.id}/`)}
                   />
                 ))}
               </div>

@@ -4,6 +4,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import raw from '../data/cards.json';
 import { SUITS, type SuitKey } from '../config';
+import { withBase } from './url';
 
 export interface RawCard {
   id: string;
@@ -30,11 +31,10 @@ export interface Card extends RawCard {
 const deck = raw as { deck: any; cards: RawCard[] };
 
 const ART_DIR = join(process.cwd(), 'public', 'cards', 'art');
-const BASE = import.meta.env.BASE_URL; // honors GitHub Pages base path
 
 // One shared card back for the whole deck (synced from source _back.svg).
 const backHref = existsSync(join(process.cwd(), 'public', 'cards', 'back.svg'))
-  ? `${BASE}cards/back.svg`
+  ? withBase('cards/back.svg')
   : null;
 
 const ROMAN: [number, string][] = [
@@ -67,7 +67,7 @@ function decorate(c: RawCard): Card {
     ...c,
     numeral: numeralFor(c),
     ready,
-    artHref: ready ? `${BASE}cards/art/${c.id}.svg` : null,
+    artHref: ready ? withBase(`cards/art/${c.id}.svg`) : null,
     backHref,
     domain: c.suit ? SUITS[c.suit].domain : null,
   };

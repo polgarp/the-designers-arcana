@@ -5,6 +5,7 @@ import ReadingLayout from '../../components/ReadingLayout.astro';
 import ShareBar from '../../components/ShareBar.astro';
 import { detailCards, type Card } from '../../lib/cards';
 import { SITE } from '../../config';
+import { withBase } from '../../lib/url';
 
 export function getStaticPaths() {
   const list = detailCards;
@@ -19,10 +20,9 @@ export function getStaticPaths() {
 }
 
 const { card, prev, next } = Astro.props as { card: Card; prev: Card; next: Card };
-const base = import.meta.env.BASE_URL;
-const canonical = new URL(`${base}cards/${card.id}/`, Astro.site).href;
-const ogImg = new URL(`${base}og/${card.id}.png`, Astro.site).href;
-const shareImg = `${base}share/${card.id}.png`;
+const canonical = new URL(withBase(`cards/${card.id}/`), Astro.site).href;
+const ogImg = new URL(withBase(`og/${card.id}.png`), Astro.site).href;
+const shareImg = withBase(`share/${card.id}.png`);
 
 const traditional =
   card.arcana === 'major'
@@ -38,7 +38,7 @@ const traditional =
 >
   <main class="shell">
     <WindowChrome>
-      <a class="back" href={base}>← All cards</a>
+      <a class="back" href={withBase()}>← All cards</a>
 
       <ReadingLayout card={card} />
 
@@ -58,11 +58,11 @@ const traditional =
       </div>
 
       <nav class="pager">
-        <a class="pager__link" href={`${base}cards/${prev.id}/`}>
+        <a class="pager__link" href={withBase(`cards/${prev.id}/`)}>
           <span class="label">Prev</span>
           <span class="pager__name t-name">← {prev.name}</span>
         </a>
-        <a class="pager__link pager__link--next" href={`${base}cards/${next.id}/`}>
+        <a class="pager__link pager__link--next" href={withBase(`cards/${next.id}/`)}>
           <span class="label">Next</span>
           <span class="pager__name t-name">{next.name} →</span>
         </a>

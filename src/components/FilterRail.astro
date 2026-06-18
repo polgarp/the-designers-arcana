@@ -1,23 +1,16 @@
 ---
-// Left rail — filter the gallery by arcana / suit / readiness.
-// Pure client-side: toggles tile visibility via data-attributes.
+// Left rail — filter the gallery. Arcana + suit are one mutually-exclusive
+// scope (a Major can't also be a suit, so no contradictory state), plus a
+// deck-coded reveal status. Pure client-side: toggles tile visibility.
 import { SUITS, suitOrderList } from '../config';
 
 const groups = [
   {
-    key: 'arcana',
+    key: 'scope',
     label: 'Arcana',
     options: [
       { v: 'all', t: 'All' },
       { v: 'major', t: 'Major' },
-      { v: 'minor', t: 'Minor' },
-    ],
-  },
-  {
-    key: 'suit',
-    label: 'Suit',
-    options: [
-      { v: 'all', t: 'All' },
       ...suitOrderList.map((s) => ({ v: s, t: SUITS[s].label, c: SUITS[s].color })),
     ],
   },
@@ -26,8 +19,8 @@ const groups = [
     label: 'Status',
     options: [
       { v: 'all', t: 'All' },
-      { v: 'true', t: 'Illustrated' },
-      { v: 'false', t: 'Awaiting' },
+      { v: 'true', t: 'Revealed' },
+      { v: 'false', t: 'Sealed' },
     ],
   },
 ];
@@ -56,19 +49,19 @@ const groups = [
 </aside>
 
 <script>
-  const state: Record<string, string> = { arcana: 'all', suit: 'all', ready: 'all' };
+  const state: Record<string, string> = { scope: 'all', ready: 'all' };
   const tiles = Array.from(document.querySelectorAll<HTMLElement>('[data-arcana]'));
   const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-section]'));
 
   function apply() {
     for (const t of tiles) {
-      const ok =
-        (state.arcana === 'all' || t.dataset.arcana === state.arcana) &&
-        (state.suit === 'all' || t.dataset.suit === state.suit) &&
-        (state.ready === 'all' || t.dataset.ready === state.ready);
-      t.style.display = ok ? '' : 'none';
+      const scopeOk =
+        state.scope === 'all' ||
+        (state.scope === 'major' && t.dataset.arcana === 'major') ||
+        t.dataset.suit === state.scope;
+      const readyOk = state.ready === 'all' || t.dataset.ready === state.ready;
+      t.style.display = scopeOk && readyOk ? '' : 'none';
     }
-    // hide sections with no visible tiles
     for (const s of sections) {
       const any = s.querySelector<HTMLElement>('[data-arcana]:not([style*="display: none"])');
       s.style.display = any ? '' : 'none';

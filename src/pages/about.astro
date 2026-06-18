@@ -3,12 +3,13 @@ import Layout from '../components/Layout.astro';
 import WindowChrome from '../components/WindowChrome.astro';
 import { SITE, SUITS, suitOrderList } from '../config';
 import { progress } from '../lib/cards';
+import { withBase } from '../lib/url';
 ---
 
 <Layout title={`About — ${SITE.name}`}>
   <main class="shell">
     <WindowChrome>
-      <a class="back" href={import.meta.env.BASE_URL}>← All cards</a>
+      <a class="back" href={withBase()}>← All cards</a>
 
       <article class="about">
         <p class="lead t-italic">

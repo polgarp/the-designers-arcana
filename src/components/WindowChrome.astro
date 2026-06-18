@@ -1,6 +1,8 @@
 ---
 // The "desktop-app-window" frame — the card border made into UI chrome.
 // Double navy rule, brandmark (links home) left, About link right.
+import { withBase } from '../lib/url';
+
 interface Props {
   brand?: string;
   version?: string;
@@ -11,12 +13,11 @@ const {
   version = 'v0.1',
   tagline = 'A working designer’s tarot.',
 } = Astro.props;
-const base = import.meta.env.BASE_URL;
 ---
 
 <section class="window">
   <header class="bar">
-    <a class="brand" href={base}>
+    <a class="brand" href={withBase()}>
       <svg class="lozenge" viewBox="0 0 16 16" aria-hidden="true">
         <path d="M8 1 L15 8 L8 15 L1 8 Z" fill="none" stroke="var(--house)" stroke-width="1.2" />
         <path d="M8 4.5 L11.5 8 L8 11.5 L4.5 8 Z" fill="var(--house)" />
@@ -26,7 +27,7 @@ const base = import.meta.env.BASE_URL;
       <span class="brand__sep" aria-hidden="true">/</span>
       <span class="brand__tag t-italic">{tagline}</span>
     </a>
-    <a class="about" href={`${base}about/`}>About</a>
+    <a class="about" href={withBase('about/')}>About</a>
   </header>
   <div class="rule" aria-hidden="true"></div>
   <div class="window__body">
