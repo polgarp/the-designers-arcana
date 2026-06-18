@@ -8,10 +8,20 @@ import '@fontsource/ibm-plex-mono/500.css';
 import '@fontsource/spectral/400-italic.css';
 import '../styles/tokens.css';
 
+import { SITE } from '../config';
+
 interface Props {
   title?: string;
+  description?: string;
+  image?: string;     // absolute or base-relative OG image
+  canonical?: string;
 }
-const { title = "The Designer's Arcana" } = Astro.props;
+const {
+  title = SITE.name,
+  description = SITE.description,
+  image,
+  canonical,
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -20,6 +30,20 @@ const { title = "The Designer's Arcana" } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
+    <meta name="description" content={description} />
+    {canonical && <link rel="canonical" href={canonical} />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    {image && <meta property="og:image" content={image} />}
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {image && <meta name="twitter:image" content={image} />}
   </head>
   <body>
     <slot />

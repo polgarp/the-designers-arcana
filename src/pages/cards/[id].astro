@@ -1,0 +1,122 @@
+---
+import Layout from '../../components/Layout.astro';
+import WindowChrome from '../../components/WindowChrome.astro';
+import ReadingLayout from '../../components/ReadingLayout.astro';
+import ShareBar from '../../components/ShareBar.astro';
+import { ordered, type Card } from '../../lib/cards';
+import { SITE } from '../../config';
+
+export function getStaticPaths() {
+  return ordered.map((card, i) => ({
+    params: { id: card.id },
+    props: {
+      card,
+      prev: ordered[(i - 1 + ordered.length) % ordered.length],
+      next: ordered[(i + 1) % ordered.length],
+    },
+  }));
+}
+
+const { card, prev, next } = Astro.props as { card: Card; prev: Card; next: Card };
+const base = import.meta.env.BASE_URL;
+const canonical = new URL(`${base}cards/${card.id}/`, Astro.site).href;
+const ogImg = new URL(`${base}og/${card.id}.png`, Astro.site).href;
+const shareImg = `${base}share/${card.id}.png`;
+
+const traditional =
+  card.arcana === 'major'
+    ? `${card.traditional_name} · Major Arcana`
+    : `${card.traditional_name}`;
+---
+
+<Layout
+  title={`${card.name} — ${SITE.name}`}
+  description={card.upright_meaning}
+  image={ogImg}
+  canonical={canonical}
+>
+  <main class="shell">
+    <WindowChrome nav>
+      <a class="back" href={base}>← All cards</a>
+
+      <ReadingLayout card={card} />
+
+      <section class="why">
+        <span class="label">Why this card</span>
+        <p class="why__body t-name">{card.fit_rationale}</p>
+      </section>
+
+      <div class="actions">
+        <ShareBar
+          name={card.name}
+          ready={card.ready}
+          artHref={card.artHref}
+          shareImg={shareImg}
+          url={canonical}
+        />
+      </div>
+
+      <nav class="pager">
+        <a class="pager__link" href={`${base}cards/${prev.id}/`}>
+          <span class="label">Prev</span>
+          <span class="pager__name t-name">← {prev.name}</span>
+        </a>
+        <a class="pager__link pager__link--next" href={`${base}cards/${next.id}/`}>
+          <span class="label">Next</span>
+          <span class="pager__name t-name">{next.name} →</span>
+        </a>
+      </nav>
+    </WindowChrome>
+  </main>
+</Layout>
+
+<style>
+  .shell {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: clamp(1rem, 3vw, 2.5rem);
+  }
+  .back {
+    display: inline-block;
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-60);
+    text-decoration: none;
+    margin-bottom: 1.6rem;
+  }
+  .back:hover { color: var(--house); }
+
+  .why {
+    margin-top: 2.4rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--ink-30);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 68ch;
+  }
+  .why__body { margin: 0; font-size: 0.96rem; line-height: 1.6; color: var(--ink); }
+
+  .actions { margin-top: 2rem; }
+
+  .pager {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2.6rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--ink);
+  }
+  .pager__link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .pager__link--next { text-align: right; }
+  .pager__name { font-size: 0.95rem; }
+  .pager__link:hover .pager__name { color: var(--house); }
+</style>
