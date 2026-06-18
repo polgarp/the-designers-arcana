@@ -82,6 +82,13 @@ body {
   border: 0;
 }
 
+/* — Subtle directional slide for prev/next (small travel + fade, so it
+     reads as paging without flinging content past the frame) — */
+@keyframes da-out-left  { to   { transform: translateX(-26px); opacity: 0; } }
+@keyframes da-in-right  { from { transform: translateX(26px);  opacity: 0; } }
+@keyframes da-out-right { to   { transform: translateX(26px);  opacity: 0; } }
+@keyframes da-in-left   { from { transform: translateX(-26px); opacity: 0; } }
+
 /* — Type voices — */
 .t-display { font-family: var(--font-display); }
 .t-name { font-family: var(--font-name); }

@@ -56,12 +56,12 @@ const hasFooter = Astro.slots.has('footer');
     display: flex;
     flex-direction: column;
   }
-  /* fixed-viewport app window: body scrolls, footer pins to the bottom */
+  /* fixed-viewport app window: an inner region scrolls, footer pins down */
   .window--tall {
     height: calc(100svh - 2 * clamp(1rem, 3vw, 2.5rem));
     min-height: 0;
   }
-  .window--tall .window__body { overflow-y: auto; min-height: 0; }
+  .window--tall .window__body { overflow: hidden; min-height: 0; }
   .window__footer { flex: none; }
   /* second, inset rule → Deco double-line */
   .window::after {
