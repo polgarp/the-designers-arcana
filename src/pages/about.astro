@@ -9,6 +9,7 @@ import { withBase } from '../lib/url';
 <Layout title={`About — ${SITE.name}`}>
   <main class="shell">
     <WindowChrome>
+      <div class="colwrap">
       <a class="back" href={withBase()}>← All cards</a>
 
       <article class="about">
@@ -52,12 +53,13 @@ import { withBase } from '../lib/url';
           Drawn &amp; written by Peter Polgar · {SITE.name} {SITE.version}
         </p>
       </article>
+      </div>
     </WindowChrome>
   </main>
 </Layout>
 
 <style>
-  .shell { max-width: 760px; margin: 0 auto; padding: clamp(1rem, 3vw, 2.5rem); }
+  .colwrap { max-width: 760px; margin: 0 auto; }
   .back {
     display: inline-block;
     font-family: var(--font-ui);

@@ -39,12 +39,22 @@
 /* — Reset / base — */
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
+/* always reserve the scrollbar gutter so the centered window frame never
+   shifts between a tall (scrolling) page and a short one */
+html { scrollbar-gutter: stable; }
 body {
   background: var(--cream);
   color: var(--ink);
   font-family: var(--font-ui);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* one shared page shell — every page's window frame is the same width */
+.shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: clamp(1rem, 3vw, 2.5rem);
 }
 
 /* — Type voices — */
