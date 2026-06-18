@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import raw from '../data/cards.json';
 import { SUITS, type SuitKey } from '../config';
 import { withBase } from './url';
+import { threadsForKeywords, THREADS } from '../themes';
 
 export interface RawCard {
   id: string;
@@ -26,6 +27,7 @@ export interface Card extends RawCard {
   artHref: string | null;
   backHref: string | null; // synced _back.svg, if present (else inline back)
   domain: string | null; // suit domain, for the rail
+  threads: string[];     // thematic thread ids this card belongs to
 }
 
 const deck = raw as { deck: any; cards: RawCard[] };
@@ -70,6 +72,7 @@ function decorate(c: RawCard): Card {
     artHref: ready ? withBase(`cards/art/${c.id}.svg`) : null,
     backHref,
     domain: c.suit ? SUITS[c.suit].domain : null,
+    threads: threadsForKeywords(c.keywords),
   };
 }
 
@@ -110,3 +113,8 @@ export const ordered: Card[] = [
 export const detailCards: Card[] = import.meta.env.DEV
   ? ordered
   : ordered.filter((c) => c.ready);
+
+// How many cards sit on each thread (for the filter rail).
+export const threadCounts: Record<string, number> = Object.fromEntries(
+  THREADS.map((t) => [t.id, cards.filter((c) => c.threads.includes(t.id)).length]),
+);
