@@ -7,15 +7,18 @@ interface Props {
   brand?: string;
   version?: string;
   tagline?: string;
+  tall?: boolean;   // fixed-viewport window: body scrolls, footer pins to bottom
 }
 const {
   brand = "The Designer's Arcana",
   version = 'v0.1',
   tagline = 'A working designer’s tarot.',
+  tall = false,
 } = Astro.props;
+const hasFooter = Astro.slots.has('footer');
 ---
 
-<section class="window">
+<section class:list={['window', { 'window--tall': tall }]}>
   <header class="bar">
     <a class="brand" href={withBase()}>
       <svg class="lozenge" viewBox="0 0 16 16" aria-hidden="true">
@@ -33,6 +36,11 @@ const {
   <div class="window__body">
     <slot />
   </div>
+  {hasFooter && (
+    <div class="window__footer">
+      <slot name="footer" />
+    </div>
+  )}
 </section>
 
 <style>
@@ -48,6 +56,13 @@ const {
     display: flex;
     flex-direction: column;
   }
+  /* fixed-viewport app window: body scrolls, footer pins to the bottom */
+  .window--tall {
+    height: calc(100svh - 2 * clamp(1rem, 3vw, 2.5rem));
+    min-height: 0;
+  }
+  .window--tall .window__body { overflow-y: auto; min-height: 0; }
+  .window__footer { flex: none; }
   /* second, inset rule → Deco double-line */
   .window::after {
     content: '';
@@ -117,5 +132,10 @@ const {
 
   @media (max-width: 640px) {
     .brand__sep, .brand__tag { display: none; }
+  }
+  /* on small screens, let the tall window grow and the page scroll normally */
+  @media (max-width: 720px) {
+    .window--tall { height: auto; min-height: calc(100svh - 2 * clamp(1rem, 3vw, 2.5rem)); }
+    .window--tall .window__body { overflow: visible; }
   }
 </style>

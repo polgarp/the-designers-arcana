@@ -30,7 +30,7 @@ const Tag = linkable ? 'a' : 'div';
   href={linkable ? href : undefined}
   role={linkable ? undefined : 'img'}
   aria-label={ready ? name : 'Unrevealed card'}
-  transition:name={transitionName}
+  style={transitionName ? `view-transition-name:${transitionName}` : undefined}
 >
   {ready && artHref ? (
     <img class="tile__plate" src={artHref} alt={name} loading="lazy" />
