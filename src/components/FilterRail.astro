@@ -2,7 +2,6 @@
 // Left rail — filter the gallery by arcana, thread, or reveal status.
 // All mutually-exclusive within a group. Pure client-side.
 import { SUITS, suitOrderList } from '../config';
-import { THREADS } from '../themes';
 
 const groups = [
   {
@@ -13,11 +12,6 @@ const groups = [
       { v: 'major', t: 'Major' },
       ...suitOrderList.map((s) => ({ v: s, t: SUITS[s].label, c: SUITS[s].color })),
     ],
-  },
-  {
-    key: 'thread',
-    label: 'Threads',
-    options: [{ v: 'all', t: 'All' }, ...THREADS.map((t) => ({ v: t.id, t: t.label }))],
   },
   {
     key: 'ready',
@@ -59,7 +53,7 @@ const groups = [
     const tiles = Array.from(document.querySelectorAll<HTMLElement>('[data-arcana]'));
     if (!rail || !tiles.length) return;
     const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-section]'));
-    const state: Record<string, string> = { scope: 'all', thread: 'all', ready: 'all' };
+    const state: Record<string, string> = { scope: 'all', ready: 'all' };
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     function toggle() {
@@ -68,7 +62,6 @@ const groups = [
           (state.scope === 'all' ||
             (state.scope === 'major' && t.dataset.arcana === 'major') ||
             t.dataset.suit === state.scope) &&
-          (state.thread === 'all' || (t.dataset.threads ?? '').split(' ').includes(state.thread)) &&
           (state.ready === 'all' || t.dataset.ready === state.ready);
         t.style.display = ok ? '' : 'none';
       }
@@ -99,15 +92,6 @@ const groups = [
         btn.addEventListener('click', () => select(key, btn.dataset.val!));
       });
     });
-
-    // deep link: /#thread=craft pre-selects a thread (e.g. from a card page)
-    const threadIds = new Set(
-      Array.from(rail.querySelectorAll('.filters__group[data-group="thread"] .opt')).map(
-        (b) => (b as HTMLElement).dataset.val!,
-      ),
-    );
-    const m = location.hash.match(/thread=([\w-]+)/);
-    if (m && threadIds.has(m[1])) select('thread', m[1], false);
   }
 
   if (!(window as any).__filtersInit) {

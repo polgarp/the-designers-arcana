@@ -114,7 +114,7 @@ export const detailCards: Card[] = import.meta.env.DEV
   ? ordered
   : ordered.filter((c) => c.ready);
 
-// How many cards sit on each thread (for the filter rail).
-export const threadCounts: Record<string, number> = Object.fromEntries(
-  THREADS.map((t) => [t.id, cards.filter((c) => c.threads.includes(t.id)).length]),
-);
+// Cards on a given thread, in deck order.
+export function threadCards(threadId: string): Card[] {
+  return ordered.filter((c) => c.threads.includes(threadId));
+}

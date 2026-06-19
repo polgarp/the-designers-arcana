@@ -1,0 +1,131 @@
+---
+import Layout from '../../components/Layout.astro';
+import WindowChrome from '../../components/WindowChrome.astro';
+import CardTile from '../../components/CardTile.astro';
+import { threadCards, detailCards } from '../../lib/cards';
+import { THREADS, keywordThread } from '../../themes';
+import { withBase } from '../../lib/url';
+import { SITE } from '../../config';
+
+export function getStaticPaths() {
+  return THREADS.map((t) => ({ params: { id: t.id }, props: { thread: t } }));
+}
+
+const { thread } = Astro.props;
+const cards = threadCards(thread.id);
+const openIds = new Set(detailCards.map((c) => c.id));
+const revealed = cards.filter((c) => c.ready).length;
+const cleanName = (n: string) => n.split(' — ').at(-1)!;
+---
+
+<Layout title={`${thread.label} · ${SITE.name}`} description={thread.blurb}>
+  <main class="shell">
+    <WindowChrome>
+      <a class="back" href={withBase()}>← All cards</a>
+
+      <header class="thead">
+        <span class="label">Thread</span>
+        <h1 class="thead__name t-name">{thread.label}</h1>
+        <p class="thead__blurb t-italic">{thread.blurb}</p>
+        <span class="thead__count label">
+          {cards.length} cards{revealed > 0 ? ` · ${revealed} revealed` : ''}
+        </span>
+      </header>
+
+      <ul class="related">
+        {cards.map((c) => {
+          const open = openIds.has(c.id);
+          return (
+            <li class="rel">
+              <div class="rel__thumb">
+                {open ? (
+                  <a href={withBase(`cards/${c.id}/`)}>
+                    <CardTile name={c.name} suit={c.suit} ready={c.ready} artHref={c.artHref} backHref={c.backHref} />
+                  </a>
+                ) : (
+                  <CardTile name={c.name} suit={c.suit} ready={c.ready} artHref={c.artHref} backHref={c.backHref} />
+                )}
+              </div>
+              <div class="rel__body">
+                {open ? (
+                  <>
+                    <a class="rel__name t-name" href={withBase(`cards/${c.id}/`)}>{cleanName(c.name)}</a>
+                    <ul class="kw">
+                      {c.keywords.map((k) => (
+                        <li>
+                          <a class="kw-tag" href={withBase(`themes/${keywordThread(k) ?? c.threads[0]}/`)}>{k}</a>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                ) : (
+                  <span class="rel__sealed label">Sealed — not yet revealed</span>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </WindowChrome>
+  </main>
+</Layout>
+
+<style>
+  .back {
+    display: inline-block;
+    font-family: var(--font-ui);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-60);
+    text-decoration: none;
+    margin-bottom: 2rem;
+  }
+  .back:hover { color: var(--house); }
+
+  .thead { display: flex; flex-direction: column; max-width: 60ch; margin-bottom: 2.4rem; }
+  .thead__name { font-size: var(--fs-xl); font-weight: 600; line-height: 1.05; margin: 0.5rem 0 0; color: var(--ink); }
+  .thead__blurb { margin: 0.6rem 0 0; font-size: var(--fs-md); color: var(--ink-60); }
+  .thead__count { margin-top: 1rem; }
+
+  .related { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+  .rel {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 1.2rem;
+    align-items: center;
+    padding: 1.1rem 0;
+    border-top: 1px solid var(--ink-30);
+  }
+  .rel:last-child { border-bottom: 1px solid var(--ink-30); }
+  .rel__thumb a { display: block; }
+  .rel__body { display: flex; flex-direction: column; gap: 0.6rem; min-width: 0; }
+  .rel__name {
+    font-size: var(--fs-md);
+    color: var(--ink);
+    text-decoration: none;
+    width: fit-content;
+  }
+  .rel__name:hover { color: var(--house); }
+  .rel__sealed { color: var(--ink-30); }
+
+  .kw { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .kw-tag {
+    display: inline-block;
+    font-family: var(--font-ui);
+    font-size: var(--fs-2xs);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-60);
+    text-decoration: none;
+    border: 1px solid var(--ink-30);
+    border-radius: 999px;
+    padding: 0.2rem 0.6rem;
+    transition: border-color 140ms ease, color 140ms ease;
+  }
+  .kw-tag:hover { color: var(--house); border-color: var(--house); }
+
+  @media (max-width: 520px) {
+    .rel { grid-template-columns: 56px 1fr; gap: 0.9rem; }
+  }
+</style>

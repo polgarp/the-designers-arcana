@@ -93,3 +93,9 @@ export function threadsForKeywords(keywords: string[]): string[] {
   const kw = new Set(keywords);
   return THREADS.filter((t) => t.seeds.some((s) => kw.has(s))).map((t) => t.id);
 }
+
+// The thread a single keyword sits in (first match), or null if it's a
+// one-off not in any seed list.
+export function keywordThread(keyword: string): string | null {
+  return THREADS.find((t) => t.seeds.includes(keyword))?.id ?? null;
+}

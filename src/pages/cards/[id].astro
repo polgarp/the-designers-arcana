@@ -5,7 +5,7 @@ import CardTile from '../../components/CardTile.astro';
 import { detailCards, type Card } from '../../lib/cards';
 import { SITE, SUITS } from '../../config';
 import { withBase } from '../../lib/url';
-import { threadById } from '../../themes';
+import { keywordThread } from '../../themes';
 
 export function getStaticPaths() {
   const list = detailCards;
@@ -66,15 +66,6 @@ const slideText = {
               <p class="chead__sub t-italic">{sub}</p>
             </header>
 
-            {card.threads.length > 0 && (
-              <nav class="threads" aria-label="Threads this card runs through">
-                <span class="threads__lead label">Runs through</span>
-                {card.threads.map((t) => (
-                  <a class="thread-chip" href={`${withBase()}#thread=${t}`}>{threadById.get(t)?.label}</a>
-                ))}
-              </nav>
-            )}
-
             <div class="rblock">
               <span class="label">Upright</span>
               <p class="rblock__body">{card.upright_meaning}</p>
@@ -94,15 +85,6 @@ const slideText = {
               <p class="why__body t-name">{card.fit_rationale}</p>
             </section>
 
-            <div class="meta">
-              <div class="meta__block">
-                <span class="label">Keywords</span>
-                <ul class="kw">
-                  {card.keywords.map((k, i) => <li class:list={['kw__word', { 'kw__word--lead': i === 0 }]}>{k}</li>)}
-                </ul>
-              </div>
-            </div>
-
             {card.ready && (
               <figure class="share">
                 <img class="share__img" src={shareImg} alt={`${card.name} — shareable card`} width="170" height="213" loading="lazy" />
@@ -114,7 +96,7 @@ const slideText = {
             )}
           </div>
 
-          <!-- RIGHT: the card (stays in place) -->
+          <!-- RIGHT: the card (stays in place), with its keyword tags -->
           <aside class="cardcol">
             <CardTile
               name={card.name}
@@ -124,6 +106,16 @@ const slideText = {
               backHref={card.backHref}
               transitionName={`card-${card.id}`}
             />
+            <ul class="kw" aria-label="Keywords — tap to explore related cards">
+              {card.keywords.map((k, i) => (
+                <li>
+                  <a
+                    class:list={['kw-tag', { 'kw-tag--lead': i === 0 }]}
+                    href={withBase(`themes/${keywordThread(k) ?? card.threads[0]}/`)}
+                  >{k}</a>
+                </li>
+              ))}
+            </ul>
           </aside>
         </div>
       </div>
@@ -221,42 +213,24 @@ const slideText = {
   .why { margin-top: 0.2rem; padding-top: 1.3rem; border-top: 1px solid var(--ink-30); display: flex; flex-direction: column; gap: 0.6rem; padding-bottom: 0.5rem; }
   .why__body { margin: 0; font-size: var(--fs-sm); line-height: 1.6; color: var(--ink-60); }
 
-  /* — right card column: just the card, stays put — */
-  .cardcol { align-self: start; }
-
-  /* card metadata at the foot of the reading column */
-  .meta { display: flex; flex-direction: column; gap: 1.2rem; padding-top: 1.3rem; border-top: 1px solid var(--ink-30); }
-  .meta__block { display: flex; flex-direction: column; gap: 0.55rem; }
-  /* keywords as quiet metadata, not interactive pills */
-  .kw { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.15rem 0; }
-  .kw__word {
+  /* — right card column: the card + its (clickable) keyword tags — */
+  .cardcol { align-self: start; display: flex; flex-direction: column; gap: 1rem; }
+  .kw { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .kw-tag {
+    display: inline-block;
     font-family: var(--font-ui);
     font-size: var(--fs-2xs);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--ink-60);
-  }
-  .kw__word:not(:last-child)::after {
-    content: '·';
-    margin: 0 0.5rem;
-    color: var(--ink-30);
-  }
-  .kw__word--lead { color: var(--house); }
-
-  .threads { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; }
-  .threads__lead { margin-right: 0.15rem; }
-  .thread-chip {
-    font-family: var(--font-ui);
-    font-size: var(--fs-2xs);
-    letter-spacing: 0.03em;
-    color: var(--ink);
     text-decoration: none;
     border: 1px solid var(--ink-30);
     border-radius: 999px;
-    padding: 0.25rem 0.7rem;
-    transition: border-color 140ms ease, color 140ms ease, background 140ms ease;
+    padding: 0.22rem 0.6rem;
+    transition: border-color 140ms ease, color 140ms ease;
   }
-  .thread-chip:hover { border-color: var(--house); color: var(--house); }
+  .kw-tag:hover { color: var(--house); border-color: var(--house); }
+  .kw-tag--lead { color: var(--house); border-color: var(--house); }
 
   .share { margin: 0.4rem 0 0; display: flex; gap: 0.9rem; align-items: flex-start; padding-top: 1.1rem; border-top: 1px solid var(--ink-30); }
   .share__img { display: block; border: 1px solid var(--ink-30); height: auto; flex: none; }
