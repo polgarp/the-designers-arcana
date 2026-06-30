@@ -40,10 +40,10 @@ const cleanName = (n: string) => n.split(' — ').at(-1)!;
               <div class="rel__thumb">
                 {open ? (
                   <a href={withBase(`cards/${c.id}/`)}>
-                    <CardTile name={c.name} suit={c.suit} ready={c.ready} artHref={c.artHref} backHref={c.backHref} />
+                    <CardTile name={c.name} suit={c.suit} ready={c.ready} artHref={c.artThumb ?? c.artHref} backHref={c.backThumb ?? c.backHref} />
                   </a>
                 ) : (
-                  <CardTile name={c.name} suit={c.suit} ready={c.ready} artHref={c.artHref} backHref={c.backHref} />
+                  <CardTile name={c.name} suit={c.suit} ready={c.ready} artHref={c.artThumb ?? c.artHref} backHref={c.backThumb ?? c.backHref} />
                 )}
               </div>
               <div class="rel__body">
@@ -84,7 +84,7 @@ const cleanName = (n: string) => n.split(' — ').at(-1)!;
   .back:hover { color: var(--house); }
 
   .thead { display: flex; flex-direction: column; max-width: 60ch; margin-bottom: 2.4rem; }
-  .thead__name { font-size: var(--fs-xl); font-weight: 600; line-height: 1.05; margin: 0.5rem 0 0; color: var(--ink); }
+  .thead__name { font-size: var(--fs-xl); line-height: 1.05; margin: 0.5rem 0 0; color: var(--ink); }
   .thead__blurb { margin: 0.6rem 0 0; font-size: var(--fs-md); color: var(--ink-60); }
   .thead__count { margin-top: 1rem; }
 

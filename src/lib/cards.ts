@@ -24,8 +24,10 @@ export interface RawCard {
 export interface Card extends RawCard {
   numeral: string;       // display numeral: "II", "ACE", "QUEEN", "0"…
   ready: boolean;        // a finished art SVG exists
-  artHref: string | null;
-  backHref: string | null; // synced _back.svg, if present (else inline back)
+  artHref: string | null;   // full SVG (detail view)
+  artThumb: string | null;  // raster thumbnail (gallery)
+  backHref: string | null;  // synced _back.svg, if present (else inline back)
+  backThumb: string | null; // raster back thumbnail (gallery)
   domain: string | null; // suit domain, for the rail
   threads: string[];     // thematic thread ids this card belongs to
 }
@@ -35,8 +37,10 @@ const deck = raw as { deck: any; cards: RawCard[] };
 const ART_DIR = join(process.cwd(), 'public', 'cards', 'art');
 
 // One shared card back for the whole deck (synced from source _back.svg).
-const backHref = existsSync(join(process.cwd(), 'public', 'cards', 'back.svg'))
-  ? withBase('cards/back.svg')
+const CARDS_DIR = join(process.cwd(), 'public', 'cards');
+const backHref = existsSync(join(CARDS_DIR, 'back.svg')) ? withBase('cards/back.svg') : null;
+const backThumb = existsSync(join(CARDS_DIR, 'back-thumb.png'))
+  ? withBase('cards/back-thumb.png')
   : null;
 
 const ROMAN: [number, string][] = [
@@ -70,7 +74,11 @@ function decorate(c: RawCard): Card {
     numeral: numeralFor(c),
     ready,
     artHref: ready ? withBase(`cards/art/${c.id}.svg`) : null,
+    artThumb: ready && existsSync(join(ART_DIR, `${c.id}-thumb.png`))
+      ? withBase(`cards/art/${c.id}-thumb.png`)
+      : null,
     backHref,
+    backThumb,
     domain: c.suit ? SUITS[c.suit].domain : null,
     threads: threadsForKeywords(c.keywords),
   };

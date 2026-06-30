@@ -26,10 +26,10 @@
   --pad: clamp(1rem, 2.5vw, 2rem);
 
   /* — Type: "Studio Manual" voice (chosen on the style tile) —
-       Display + names: Fraunces · UI/labels/chrome: IBM Plex Mono ·
-       the one human line: Spectral Italic. */
-  --font-display: 'Fraunces', Georgia, serif;     /* wordmark, numerals */
-  --font-name: 'Fraunces', Georgia, serif;        /* card names, values */
+       Display + names: Marcellus (matches the card titles) ·
+       UI/labels/chrome: IBM Plex Mono · the one human line: Spectral Italic. */
+  --font-display: 'Marcellus', Georgia, serif;     /* wordmark, numerals */
+  --font-name: 'Marcellus', Georgia, serif;        /* card names, values */
   --font-ui: 'IBM Plex Mono', ui-monospace, monospace; /* labels, chrome, nav */
   --font-italic: 'Spectral', Georgia, serif;      /* flavor / human line */
   --ui-tracking: 0.12em;
@@ -43,6 +43,11 @@
   --fs-md:  1.25rem;    /* 20px · subhead, lead */
   --fs-lg:  1.75rem;    /* 28px · section title */
   --fs-xl:  clamp(2.1rem, 4.5vw, 3rem); /* card name / hero */
+
+  /* card lift — cards sit on the same cream as the page, so a soft
+     navy-tinted shadow (follows the rounded-card alpha) reads them as cards */
+  --card-lift: drop-shadow(0 1px 1px rgba(27, 34, 51, 0.07))
+               drop-shadow(0 6px 15px rgba(27, 34, 51, 0.13));
 }
 
 /* — Reset / base — */

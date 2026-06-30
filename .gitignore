@@ -7,6 +7,8 @@ node_modules/
 # synced content (source of truth lives in product-design-tarot)
 src/data/cards.json
 public/cards/art/
+public/cards/back.svg
+public/cards/back-thumb.png
 public/og/
 public/share/
 # os / editor

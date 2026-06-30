@@ -175,3 +175,21 @@ for (const card of ready) {
   n++;
 }
 console.log(`✓ generated ${n * 2} share images (${n} illustrated card(s))`);
+
+// Raster thumbnails for the gallery. A detailed SVG scaled inside a small
+// <img> re-rasterizes (and shimmers) on resize; a fixed PNG just scales.
+function rasterize(svgPath, width, outPath) {
+  const svg = readFileSync(svgPath, 'utf8');
+  const png = new Resvg(svg, {
+    fitTo: { mode: 'width', value: width },
+    background: 'rgba(0,0,0,0)',
+  }).render().asPng();
+  writeFileSync(outPath, png);
+}
+const THUMB_W = 440; // ~2.5× the largest gallery tile
+const backSvg = join(root, 'public/cards/back.svg');
+if (existsSync(backSvg)) rasterize(backSvg, THUMB_W, join(root, 'public/cards/back-thumb.png'));
+for (const card of ready) {
+  rasterize(join(root, 'public/cards/art', `${card.id}.svg`), THUMB_W, join(root, 'public/cards/art', `${card.id}-thumb.png`));
+}
+console.log(`✓ thumbnails: back + ${ready.length} card(s)`);

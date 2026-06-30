@@ -56,5 +56,6 @@ const Tag = linkable ? 'a' : 'div';
   a.tile { cursor: pointer; }
   a.tile:hover { transform: translateY(-3px); }
   a.tile:focus-visible { outline: 2px solid var(--house); outline-offset: 4px; }
-  .tile__plate { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .tile__plate { width: 100%; height: 100%; object-fit: contain; display: block; filter: var(--card-lift); }
+  .tile :global(svg.back) { filter: var(--card-lift); }
 </style>
