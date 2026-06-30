@@ -136,10 +136,9 @@ function ogTree(card) {
 
 function portraitTree(card) {
   return frame(1080, 1350, 'column', 20,
-    // header: card + name, centered
-    h('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 } },
+    // header: the card already shows its name, so just the tarot lineage
+    h('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 22 } },
       cardEl(card, 452, 678),
-      h('div', { style: { fontFamily: 'Marcellus', fontSize: 52, color: C.ink, textAlign: 'center' } }, card.name),
       h('div', { style: { fontFamily: 'Plex', fontSize: 18, letterSpacing: 3, textTransform: 'uppercase', color: C.house, textAlign: 'center' } },
         `${card.traditional_name}${card.arcana === 'major' ? ' · Major Arcana' : ''}`),
     ),
