@@ -230,17 +230,34 @@ const slideText = {
   .why__body { margin: 0; font-size: var(--fs-sm); line-height: 1.6; color: var(--ink-60); }
 
   /* — right card column: the card + its (clickable) keyword tags — */
-  .cardcol { align-self: start; display: flex; flex-direction: column; gap: 1rem; }
+  /* the card column fills the row height; the card scales to fit so it's
+     never cut when the viewport is shorter than it (tags stay visible) */
+  .cardcol { align-self: stretch; display: flex; flex-direction: column; gap: 1rem; min-height: 0; }
 
-  /* click-to-zoom */
+  /* click-to-zoom; flexes to the space left above the tags */
   .cardzoom {
     position: relative;
-    display: block;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
     width: 100%;
     padding: 0;
     border: none;
     background: none;
     cursor: zoom-in;
+  }
+  .cardzoom :global(.tile) {
+    width: auto; height: auto;
+    max-width: 100%; max-height: 100%;
+    aspect-ratio: auto;
+    display: flex;
+  }
+  .cardzoom :global(.tile__plate) {
+    width: auto; height: auto;
+    max-width: 100%; max-height: 100%;
+    object-fit: contain;
   }
   .cardzoom:focus-visible { outline: 2px solid var(--house); outline-offset: 6px; }
   .cardzoom__hint {

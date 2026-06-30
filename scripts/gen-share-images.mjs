@@ -55,7 +55,15 @@ function cardEl(card, w, h2) {
   const artPath = join(root, 'public/cards/art', `${card.id}.svg`);
   if (existsSync(artPath)) {
     const dataUri = 'data:image/svg+xml;base64,' + readFileSync(artPath).toString('base64');
-    return h('img', { src: dataUri, width: w, height: h2, style: { objectFit: 'contain' } });
+    // card fill is the same cream as the bg → a rounded shadow reads it as a card
+    return h('img', {
+      src: dataUri, width: w, height: h2,
+      style: {
+        objectFit: 'contain',
+        borderRadius: Math.round(w * 0.0577), // matches the SVG's rx=96 / 1664
+        boxShadow: '0 3px 6px rgba(27,34,51,0.12), 0 16px 44px rgba(27,34,51,0.24)',
+      },
+    });
   }
   return h('div', {
     style: {
@@ -111,7 +119,7 @@ function ogTree(card) {
   return h('div', {
     style: { width: 1200, height: 630, display: 'flex', background: C.cream, padding: 64, gap: 56 },
   },
-    h('div', { style: { display: 'flex', alignItems: 'center' } }, cardEl(card, 308, 462)),
+    h('div', { style: { display: 'flex', alignItems: 'center' } }, cardEl(card, 330, 495)),
     h('div', { style: { display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center', gap: 18 } },
       wordmark(),
       h('div', { style: { fontFamily: 'Marcellus', fontSize: 64, color: C.ink, lineHeight: 1.0, marginTop: 6 } }, card.name),
@@ -128,7 +136,7 @@ function portraitTree(card) {
   },
     // header: card + name, centered
     h('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 } },
-      cardEl(card, 320, 480),
+      cardEl(card, 384, 576),
       h('div', { style: { fontFamily: 'Marcellus', fontSize: 52, color: C.ink, textAlign: 'center' } }, card.name),
       h('div', { style: { fontFamily: 'Plex', fontSize: 18, letterSpacing: 3, textTransform: 'uppercase', color: C.house, textAlign: 'center' } },
         `${card.traditional_name}${card.arcana === 'major' ? ' · Major Arcana' : ''}`),

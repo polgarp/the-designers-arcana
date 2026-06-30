@@ -44,7 +44,6 @@ const sections: { title: string; sub: string; cards: Card[] }[] = [
                     backHref={c.backThumb ?? c.backHref}
                     href={withBase(`cards/${c.id}/`)}
                     transitionName={`card-${c.id}`}
-                    threads={c.threads}
                   />
                 ))}
               </div>

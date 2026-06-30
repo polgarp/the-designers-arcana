@@ -14,9 +14,8 @@ interface Props {
   backHref?: string | null;   // real synced _back.svg, if present
   href?: string;
   transitionName?: string;    // shared name → morphs gallery tile ↔ detail card
-  threads?: string[];         // thread ids, for filtering
 }
-const { name, suit = null, ready = false, artHref, backHref, href, transitionName, threads = [] } = Astro.props;
+const { name, suit = null, ready = false, artHref, backHref, href, transitionName } = Astro.props;
 
 const dev = import.meta.env.DEV;
 const linkable = href && (ready || dev);
@@ -28,7 +27,6 @@ const Tag = linkable ? 'a' : 'div';
   data-ready={String(ready)}
   data-arcana={suit ? 'minor' : 'major'}
   data-suit={suit ?? 'none'}
-  data-threads={threads.join(' ')}
   href={linkable ? href : undefined}
   role={linkable ? undefined : 'img'}
   aria-label={ready ? name : 'Unrevealed card'}
