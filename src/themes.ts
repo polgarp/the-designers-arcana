@@ -4,6 +4,9 @@
 // (no keyword left behind). Derived entirely from existing card keywords —
 // the card content is untouched.
 
+// User-facing name for these cross-cutting groupings (one place to rename).
+export const THREAD_TERM = { one: 'Motif', many: 'Motifs' };
+
 export interface Thread {
   id: string;
   label: string;

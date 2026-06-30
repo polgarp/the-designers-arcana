@@ -3,7 +3,7 @@ import Layout from '../../components/Layout.astro';
 import WindowChrome from '../../components/WindowChrome.astro';
 import CardTile from '../../components/CardTile.astro';
 import { threadCards, detailCards } from '../../lib/cards';
-import { THREADS, keywordThread } from '../../themes';
+import { THREADS, THREAD_TERM, keywordThread } from '../../themes';
 import { withBase } from '../../lib/url';
 import { SITE } from '../../config';
 
@@ -16,6 +16,14 @@ const cards = threadCards(thread.id);
 const openIds = new Set(detailCards.map((c) => c.id));
 const revealed = cards.filter((c) => c.ready).length;
 const cleanName = (n: string) => n.split(' — ').at(-1)!;
+
+// the keywords that define this grouping (its seeds that actually appear
+// on cards in the deck), and a quick test for a tag being "in" it
+const seedSet = new Set(thread.seeds);
+const inThread = (k: string) => seedSet.has(k);
+const present = new Set<string>();
+for (const c of cards) for (const k of c.keywords) if (seedSet.has(k)) present.add(k);
+const threadTags = [...present].sort();
 ---
 
 <Layout title={`${thread.label} · ${SITE.name}`} description={thread.blurb}>
@@ -24,12 +32,17 @@ const cleanName = (n: string) => n.split(' — ').at(-1)!;
       <a class="back" href={withBase()}>← All cards</a>
 
       <header class="thead">
-        <span class="label">Thread</span>
+        <span class="label">{THREAD_TERM.one}</span>
         <h1 class="thead__name t-name">{thread.label}</h1>
         <p class="thead__blurb t-italic">{thread.blurb}</p>
         <span class="thead__count label">
           {cards.length} cards{revealed > 0 ? ` · ${revealed} revealed` : ''}
         </span>
+        {threadTags.length > 0 && (
+          <ul class="threadtags" aria-label={`Keywords in this ${THREAD_TERM.one.toLowerCase()}`}>
+            {threadTags.map((k) => <li class="threadtag">{k}</li>)}
+          </ul>
+        )}
       </header>
 
       <ul class="related">
@@ -53,7 +66,10 @@ const cleanName = (n: string) => n.split(' — ').at(-1)!;
                     <ul class="kw">
                       {c.keywords.map((k) => (
                         <li>
-                          <a class="kw-tag" href={withBase(`themes/${keywordThread(k) ?? c.threads[0]}/`)}>{k}</a>
+                          <a
+                            class:list={['kw-tag', { 'kw-tag--in': inThread(k) }]}
+                            href={withBase(`themes/${keywordThread(k) ?? c.threads[0]}/`)}
+                          >{k}</a>
                         </li>
                       ))}
                     </ul>
@@ -83,10 +99,23 @@ const cleanName = (n: string) => n.split(' — ').at(-1)!;
   }
   .back:hover { color: var(--house); }
 
-  .thead { display: flex; flex-direction: column; max-width: 60ch; margin-bottom: 2.4rem; }
+  .thead { display: flex; flex-direction: column; margin-bottom: 2.4rem; }
   .thead__name { font-size: var(--fs-xl); line-height: 1.05; margin: 0.5rem 0 0; color: var(--ink); }
-  .thead__blurb { margin: 0.6rem 0 0; font-size: var(--fs-md); color: var(--ink-60); }
+  .thead__blurb { margin: 0.6rem 0 0; font-size: var(--fs-md); color: var(--ink-60); max-width: 56ch; }
   .thead__count { margin-top: 1rem; }
+
+  /* the keywords that define this grouping */
+  .threadtags { list-style: none; margin: 1.1rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; max-width: 72ch; }
+  .threadtag {
+    font-family: var(--font-ui);
+    font-size: var(--fs-2xs);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--house);
+    border: 1px solid var(--house);
+    border-radius: 999px;
+    padding: 0.2rem 0.6rem;
+  }
 
   .related { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
   .rel {
@@ -124,6 +153,8 @@ const cleanName = (n: string) => n.split(' — ').at(-1)!;
     transition: border-color 140ms ease, color 140ms ease;
   }
   .kw-tag:hover { color: var(--house); border-color: var(--house); }
+  /* tags that connect this card to the current grouping */
+  .kw-tag--in { color: var(--house); border-color: var(--house); }
 
   @media (max-width: 520px) {
     .rel { grid-template-columns: 56px 1fr; gap: 0.9rem; }

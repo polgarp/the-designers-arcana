@@ -52,8 +52,12 @@ const Tag = linkable ? 'a' : 'div';
     transition: transform 160ms ease;
   }
   a.tile { cursor: pointer; }
-  a.tile:hover { transform: translateY(-3px); }
+  a.tile:hover { transform: translateY(-4px); }
+  a.tile:hover .tile__plate {
+    filter: drop-shadow(0 2px 3px rgba(27, 34, 51, 0.16))
+            drop-shadow(0 10px 20px rgba(27, 34, 51, 0.24));
+  }
   a.tile:focus-visible { outline: 2px solid var(--house); outline-offset: 4px; }
-  .tile__plate { width: 100%; height: 100%; object-fit: contain; display: block; filter: var(--card-lift); }
+  .tile__plate { width: 100%; height: 100%; object-fit: contain; display: block; filter: var(--card-lift); transition: filter 160ms ease; }
   .tile :global(svg.back) { filter: var(--card-lift); }
 </style>
