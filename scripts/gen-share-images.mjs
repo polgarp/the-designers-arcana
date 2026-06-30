@@ -23,8 +23,7 @@ const SUIT = {
 const fontFile = (pkg, file) =>
   readFileSync(join(root, 'node_modules/@fontsource', pkg, 'files', file));
 const fonts = [
-  { name: 'Fraunces', weight: 400, style: 'normal', data: fontFile('fraunces', 'fraunces-latin-400-normal.woff') },
-  { name: 'Fraunces', weight: 600, style: 'normal', data: fontFile('fraunces', 'fraunces-latin-600-normal.woff') },
+  { name: 'Marcellus', weight: 400, style: 'normal', data: fontFile('marcellus', 'marcellus-latin-400-normal.woff') },
   { name: 'Plex', weight: 400, style: 'normal', data: fontFile('ibm-plex-mono', 'ibm-plex-mono-latin-400-normal.woff') },
   { name: 'Plex', weight: 500, style: 'normal', data: fontFile('ibm-plex-mono', 'ibm-plex-mono-latin-500-normal.woff') },
   { name: 'Spectral', weight: 400, style: 'italic', data: fontFile('spectral', 'spectral-latin-400-italic.woff') },
@@ -65,13 +64,13 @@ function cardEl(card, w, h2) {
       padding: w * 0.07, position: 'relative',
     },
   },
-    h('div', { style: { fontFamily: 'Fraunces', fontSize: w * 0.12, color: C.ink, letterSpacing: 2 } }, numeralFor(card)),
+    h('div', { style: { fontFamily: 'Marcellus', fontSize: w * 0.12, color: C.ink, letterSpacing: 2 } }, numeralFor(card)),
     h('div', { style: { display: 'flex', width: w * 0.34, height: w * 0.34, borderRadius: w, border: `1px solid ${C.ink30}` } }),
     h('div', {
       style: {
         display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center',
         width: '86%', minHeight: w * 0.2, border: `1px solid ${C.ink}`, padding: '8px 6px',
-        fontFamily: 'Fraunces', fontSize: w * 0.072, textTransform: 'uppercase',
+        fontFamily: 'Marcellus', fontSize: w * 0.072, textTransform: 'uppercase',
         letterSpacing: 1, color: C.ink, lineHeight: 1.05,
       },
     }, card.name),
@@ -97,14 +96,14 @@ const SITE_URL = 'polgarp.com/the-designers-arcana';
 const wordmark = () =>
   h('div', { style: { display: 'flex', alignItems: 'center', gap: 10 } },
     h('div', { style: { display: 'flex', width: 12, height: 12, background: C.house, transform: 'rotate(45deg)' } }),
-    h('div', { style: { fontFamily: 'Fraunces', fontSize: 22, letterSpacing: 3, textTransform: 'uppercase', color: C.ink } }, "The Designer's Arcana"),
+    h('div', { style: { fontFamily: 'Marcellus', fontSize: 22, letterSpacing: 3, textTransform: 'uppercase', color: C.ink } }, "The Designer's Arcana"),
   );
 
 // A labelled reading block for the portrait info-image.
 function readBlock(name, text) {
   return h('div', { style: { display: 'flex', flexDirection: 'column', gap: 6 } },
     h('div', { style: { fontFamily: 'Plex', fontSize: 17, letterSpacing: 3, textTransform: 'uppercase', color: C.house } }, name),
-    h('div', { style: { fontFamily: 'Fraunces', fontSize: 25, color: C.ink, lineHeight: 1.38 } }, text),
+    h('div', { style: { fontFamily: 'Marcellus', fontSize: 25, color: C.ink, lineHeight: 1.38 } }, text),
   );
 }
 
@@ -115,9 +114,9 @@ function ogTree(card) {
     h('div', { style: { display: 'flex', alignItems: 'center' } }, cardEl(card, 308, 462)),
     h('div', { style: { display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center', gap: 18 } },
       wordmark(),
-      h('div', { style: { fontFamily: 'Fraunces', fontWeight: 600, fontSize: 64, color: C.ink, lineHeight: 1.0, marginTop: 6 } }, card.name),
+      h('div', { style: { fontFamily: 'Marcellus', fontSize: 64, color: C.ink, lineHeight: 1.0, marginTop: 6 } }, card.name),
       label(`${card.traditional_name}${card.arcana === 'major' ? ' · Major Arcana' : ''}`, C.house),
-      h('div', { style: { fontFamily: 'Fraunces', fontSize: 27, color: C.ink, lineHeight: 1.45, marginTop: 6 } }, card.upright_meaning),
+      h('div', { style: { fontFamily: 'Marcellus', fontSize: 27, color: C.ink, lineHeight: 1.45, marginTop: 6 } }, card.upright_meaning),
       chips(card),
     ),
   );
@@ -130,7 +129,7 @@ function portraitTree(card) {
     // header: card + name, centered
     h('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 } },
       cardEl(card, 320, 480),
-      h('div', { style: { fontFamily: 'Fraunces', fontWeight: 600, fontSize: 52, color: C.ink, textAlign: 'center' } }, card.name),
+      h('div', { style: { fontFamily: 'Marcellus', fontSize: 52, color: C.ink, textAlign: 'center' } }, card.name),
       h('div', { style: { fontFamily: 'Plex', fontSize: 18, letterSpacing: 3, textTransform: 'uppercase', color: C.house, textAlign: 'center' } },
         `${card.traditional_name}${card.arcana === 'major' ? ' · Major Arcana' : ''}`),
     ),
