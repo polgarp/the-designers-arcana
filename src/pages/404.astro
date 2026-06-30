@@ -1,0 +1,48 @@
+---
+import Layout from '../components/Layout.astro';
+import WindowChrome from '../components/WindowChrome.astro';
+import { withBase } from '../lib/url';
+import { SITE } from '../config';
+---
+
+<Layout title={`Not in the deck · ${SITE.name}`}>
+  <main class="shell">
+    <WindowChrome>
+      <section class="nf">
+        <span class="nf__eyebrow label">404</span>
+        <h1 class="nf__title t-name">This card isn’t in the deck.</h1>
+        <p class="nf__body t-italic">
+          You drew a blank — the page you’re after doesn’t exist, or hasn’t
+          been revealed yet.
+        </p>
+        <a class="nf__link" href={withBase()}>← Back to all cards</a>
+      </section>
+    </WindowChrome>
+  </main>
+</Layout>
+
+<style>
+  .shell { max-width: 1200px; margin: 0 auto; padding: clamp(1rem, 3vw, 2.5rem); }
+  .nf {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    max-width: 46ch;
+    padding: clamp(2rem, 8vh, 6rem) 0;
+  }
+  .nf__title { font-size: var(--fs-xl); line-height: 1.05; margin: 0.3rem 0 0; color: var(--ink); }
+  .nf__body { margin: 0; font-size: var(--fs-md); line-height: 1.5; color: var(--ink-60); }
+  .nf__link {
+    margin-top: 0.8rem;
+    font-family: var(--font-ui);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-60);
+    text-decoration: none;
+    border-bottom: 1px solid var(--ink-30);
+    padding-bottom: 2px;
+  }
+  .nf__link:hover { color: var(--house); border-color: var(--house); }
+</style>

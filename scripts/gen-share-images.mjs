@@ -157,6 +157,30 @@ function portraitTree(card) {
   );
 }
 
+// Site-level OG (homepage / about / motif pages): the deck back + brand.
+function homeOgTree() {
+  const backPath = join(root, 'public/cards/back.svg');
+  const back = existsSync(backPath)
+    ? h('img', {
+        src: 'data:image/svg+xml;base64,' + readFileSync(backPath).toString('base64'),
+        width: 300, height: 450,
+        style: { borderRadius: 17, boxShadow: '0 3px 6px rgba(27,34,51,0.12), 0 16px 44px rgba(27,34,51,0.24)' },
+      })
+    : h('div', { style: { width: 300, height: 450, background: C.paper, border: `1px solid ${C.ink30}` } });
+  return frame(1200, 630, 'row', 60,
+    h('div', { style: { display: 'flex', alignItems: 'center' } }, back),
+    h('div', { style: { display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center', gap: 16 } },
+      h('div', { style: { display: 'flex', alignItems: 'center', gap: 10 } },
+        h('div', { style: { display: 'flex', width: 11, height: 11, marginBottom: 4, background: C.house, transform: 'rotate(45deg)' } }),
+        h('div', { style: { fontFamily: 'Plex', fontSize: 18, letterSpacing: 3, textTransform: 'uppercase', color: C.house } }, 'Product-design tarot'),
+      ),
+      h('div', { style: { fontFamily: 'Marcellus', fontSize: 64, color: C.ink, lineHeight: 1.0, marginTop: 2 } }, "The Designer's Arcana"),
+      h('div', { style: { fontFamily: 'Spectral', fontStyle: 'italic', fontSize: 30, color: C.ink60 } }, 'A working designer’s tarot.'),
+      h('div', { style: { fontFamily: 'Marcellus', fontSize: 26, color: C.ink, lineHeight: 1.4, marginTop: 10 } }, '78 cards of hard-won craft, revealed one plate at a time.'),
+    ),
+  );
+}
+
 async function render(tree, width, height, outPath) {
   const svg = await satori(tree, { width, height, fonts });
   const png = new Resvg(svg, { fitTo: { mode: 'width', value: width } }).render().asPng();
@@ -183,6 +207,10 @@ for (const card of ready) {
   n++;
 }
 console.log(`✓ generated ${n * 2} share images (${n} illustrated card(s))`);
+
+// Site-level OG image (used by home / about / motif pages).
+await render(homeOgTree(), 1200, 630, join(ogDir, 'home.png'));
+console.log('✓ home OG image');
 
 // Raster thumbnails for the gallery. A detailed SVG scaled inside a small
 // <img> re-rasterizes (and shimmers) on resize; a fixed PNG just scales.
