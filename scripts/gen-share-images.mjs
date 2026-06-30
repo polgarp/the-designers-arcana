@@ -103,8 +103,8 @@ const SITE_URL = 'polgarp.com/the-designers-arcana';
 
 const wordmark = () =>
   h('div', { style: { display: 'flex', alignItems: 'center', gap: 10 } },
-    h('div', { style: { display: 'flex', width: 12, height: 12, background: C.house, transform: 'rotate(45deg)' } }),
-    h('div', { style: { fontFamily: 'Marcellus', fontSize: 22, letterSpacing: 3, textTransform: 'uppercase', color: C.ink } }, "The Designer's Arcana"),
+    h('div', { style: { display: 'flex', width: 12, height: 12, marginBottom: 5, background: C.house, transform: 'rotate(45deg)' } }),
+    h('div', { style: { fontFamily: 'Marcellus', fontSize: 22, lineHeight: 1, letterSpacing: 3, textTransform: 'uppercase', color: C.ink } }, "The Designer's Arcana"),
   );
 
 // A labelled reading block for the portrait info-image.
@@ -115,10 +115,14 @@ function readBlock(name, text) {
   );
 }
 
+// a thin frame inset from the image edge — bounded, not card-like
+const frame = (w, h2, dir, gap, ...kids) =>
+  h('div', { style: { width: w, height: h2, display: 'flex', background: C.cream, padding: 24 } },
+    h('div', { style: { display: 'flex', flexDirection: dir, flex: 1, border: `1px solid ${C.ink30}`, padding: 44, gap } }, ...kids),
+  );
+
 function ogTree(card) {
-  return h('div', {
-    style: { width: 1200, height: 630, display: 'flex', background: C.cream, padding: 64, gap: 56 },
-  },
+  return frame(1200, 630, 'row', 56,
     h('div', { style: { display: 'flex', alignItems: 'center' } }, cardEl(card, 330, 495)),
     h('div', { style: { display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center', gap: 18 } },
       wordmark(),
@@ -131,9 +135,7 @@ function ogTree(card) {
 }
 
 function portraitTree(card) {
-  return h('div', {
-    style: { width: 1080, height: 1350, display: 'flex', flexDirection: 'column', background: C.cream, padding: 64, gap: 20 },
-  },
+  return frame(1080, 1350, 'column', 20,
     // header: card + name, centered
     h('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 } },
       cardEl(card, 452, 678),
