@@ -1,19 +1,30 @@
-// Sync deck content from the source-of-truth repo (product-design-tarot)
-// into this showcase. Copies card data + any finished art SVGs.
-// Source path is configurable so the same script runs locally and in CI.
+// Sync deck content from the source-of-truth deck repo into this showcase.
+// Copies card data + any finished art SVGs. The source location is taken
+// from CONTENT_REPO_PATH (set by CI), or a local, git-ignored `.content-path`
+// file for local dev — so the deck repo isn't named in tracked source.
 //
-//   CONTENT_REPO_PATH=../product-design-tarot node scripts/sync-content.mjs
+//   CONTENT_REPO_PATH=<path-to-deck-checkout> node scripts/sync-content.mjs
 //
 // Readiness is derived later from which art SVGs landed here.
 
 import { cp, mkdir, readdir, rm, copyFile } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '..');
-const content = resolve(root, process.env.CONTENT_REPO_PATH ?? '../product-design-tarot');
+
+const pathFile = join(root, '.content-path');
+const contentPath =
+  process.env.CONTENT_REPO_PATH ??
+  (existsSync(pathFile) ? readFileSync(pathFile, 'utf8').trim() : null);
+if (!contentPath) {
+  console.error('✗ No deck source path. Set CONTENT_REPO_PATH, or create a');
+  console.error('  git-ignored `.content-path` file with the path to the deck checkout.');
+  process.exit(1);
+}
+const content = resolve(root, contentPath);
 
 const srcCards = join(content, 'data', 'cards.json');
 const srcArt = join(content, 'public', 'cards', 'art');
@@ -22,7 +33,7 @@ const dstArt = join(root, 'public', 'cards', 'art');
 
 if (!existsSync(srcCards)) {
   console.error(`✗ cards.json not found at ${srcCards}`);
-  console.error(`  Set CONTENT_REPO_PATH to the product-design-tarot checkout.`);
+  console.error(`  Check CONTENT_REPO_PATH / .content-path points at the deck checkout.`);
   process.exit(1);
 }
 

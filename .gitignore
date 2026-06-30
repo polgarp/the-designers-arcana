@@ -4,7 +4,9 @@ dist/
 .astro/
 # deps
 node_modules/
-# synced content (source of truth lives in product-design-tarot)
+# local pointer to the deck source checkout (keeps its name out of source)
+.content-path
+# synced content (source of truth is the private deck repo)
 src/data/cards.json
 public/cards/art/
 public/cards/back.svg

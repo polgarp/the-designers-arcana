@@ -136,7 +136,7 @@ function portraitTree(card) {
   },
     // header: card + name, centered
     h('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 } },
-      cardEl(card, 384, 576),
+      cardEl(card, 452, 678),
       h('div', { style: { fontFamily: 'Marcellus', fontSize: 52, color: C.ink, textAlign: 'center' } }, card.name),
       h('div', { style: { fontFamily: 'Plex', fontSize: 18, letterSpacing: 3, textTransform: 'uppercase', color: C.house, textAlign: 'center' } },
         `${card.traditional_name}${card.arcana === 'major' ? ' · Major Arcana' : ''}`),

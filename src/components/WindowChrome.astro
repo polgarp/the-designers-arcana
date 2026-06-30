@@ -61,7 +61,9 @@ const hasFooter = Astro.slots.has('footer');
     height: calc(100svh - 2 * clamp(1rem, 3vw, 2.5rem));
     min-height: 0;
   }
-  .window--tall .window__body { overflow: hidden; min-height: 0; }
+  /* clip vertically (keeps the fixed-height layout) but let horizontal
+     overflow show, so the card's drop-shadow isn't sheared on the right */
+  .window--tall .window__body { overflow-x: visible; overflow-y: clip; min-height: 0; }
   .window__footer { flex: none; }
   /* second, inset rule → Deco double-line */
   .window::after {

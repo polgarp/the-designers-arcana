@@ -1,6 +1,6 @@
 /* ============================================================
    The Designer's Arcana — design tokens
-   Palette locked from product-design-tarot/public/cards/style-bible.md
+   Palette locked from the deck's style bible.
    ============================================================ */
 
 :root {
@@ -45,9 +45,13 @@
   --fs-xl:  clamp(2.1rem, 4.5vw, 3rem); /* card name / hero */
 
   /* card lift — cards sit on the same cream as the page, so a soft
-     navy-tinted shadow (follows the rounded-card alpha) reads them as cards */
-  --card-lift: drop-shadow(0 1px 1px rgba(27, 34, 51, 0.12))
-               drop-shadow(0 10px 24px rgba(27, 34, 51, 0.22));
+     navy-tinted shadow (follows the rounded-card alpha) reads them as cards.
+     Two scales: tight for small gallery tiles (else the blur merges across
+     the grid), larger for the big detail card + lightbox. */
+  --card-lift: drop-shadow(0 1px 1px rgba(27, 34, 51, 0.10))
+               drop-shadow(0 2px 6px rgba(27, 34, 51, 0.16));
+  --card-lift-lg: drop-shadow(0 2px 3px rgba(27, 34, 51, 0.12))
+                  drop-shadow(0 14px 30px rgba(27, 34, 51, 0.20));
 }
 
 /* — Reset / base — */

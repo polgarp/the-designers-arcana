@@ -234,10 +234,11 @@ const slideText = {
      never cut when the viewport is shorter than it (tags stay visible) */
   .cardcol { align-self: stretch; display: flex; flex-direction: column; gap: 1rem; min-height: 0; }
 
-  /* click-to-zoom; flexes to the space left above the tags */
+  /* click-to-zoom; sits at its natural size (tags right below it) but
+     shrinks to fit when the viewport is shorter than the card */
   .cardzoom {
     position: relative;
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     min-height: 0;
     display: flex;
     align-items: flex-start;
@@ -258,6 +259,7 @@ const slideText = {
     width: auto; height: auto;
     max-width: 100%; max-height: 100%;
     object-fit: contain;
+    filter: var(--card-lift-lg);
   }
   .cardzoom:focus-visible { outline: 2px solid var(--house); outline-offset: 6px; }
   .cardzoom__hint {
@@ -304,7 +306,7 @@ const slideText = {
     width: auto;
     height: auto;
     display: block;
-    filter: var(--card-lift);
+    filter: var(--card-lift-lg);
   }
   .lightbox__close {
     position: fixed;
