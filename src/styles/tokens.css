@@ -105,6 +105,10 @@ body {
 @keyframes da-out-right { to   { transform: translateX(26px);  opacity: 0; } }
 @keyframes da-in-left   { from { transform: translateX(-26px); opacity: 0; } }
 
+/* The card art's matching slide on prev/next paging is generated per-page
+   in src/pages/cards/[id].astro (cardScopeCSS) — it needs every card's
+   exact view-transition-name, which isn't known here. */
+
 /* — Type voices — */
 .t-display { font-family: var(--font-display); }
 .t-name { font-family: var(--font-name); }

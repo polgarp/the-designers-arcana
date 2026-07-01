@@ -75,7 +75,15 @@ const favicon = withBase('favicon.svg');
     if (pagerDir === 'prev') e.direction = 'back';
     else if (pagerDir === 'next') e.direction = 'forward';
   });
+  // Flags the card art's slide (see tokens.css) — scoped to pager clicks
+  // only, so gallery → detail keeps its morph instead of sliding. Astro's
+  // swap replaces <html>'s attributes wholesale from the fetched document,
+  // so anything set earlier (e.g. in astro:before-preparation) is wiped;
+  // this has to run in astro:after-swap, once the swap itself is done but
+  // before the view-transition pseudo tree is captured for animation.
   document.addEventListener('astro:after-swap', () => {
+    if (pagerDir) document.documentElement.setAttribute('data-card-pager', pagerDir);
+    else document.documentElement.removeAttribute('data-card-pager');
     pagerDir = null;
   });
 </script>

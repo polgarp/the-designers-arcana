@@ -44,7 +44,33 @@ const slideText = {
     new: { name: 'da-in-left', duration: '0.28s', easing: 'ease-out', fillMode: 'both' },
   },
 };
+
+// The card art carries its own view-transition-name (card-<id>, shared
+// with its gallery tile — that's what lets a gallery click morph into the
+// detail hero). Between two *different* card pages that name never
+// matches, so old/new are an unmatched pair with no size/position to
+// morph between — just the same slide as the text, gated to pager clicks
+// via html[data-card-pager] (see Layout.astro's astro:after-swap).
+// `::view-transition-old/new()` takes only a literal name or the
+// universal `*` — no wildcard — and `*` would also catch the root and
+// text transitions (equal specificity, so whichever rule loads last
+// wins — not reliably ours). Enumerating every card's exact name avoids
+// that collision entirely.
+const cardScopeCSS = (() => {
+  const names = detailCards.map((c) => `card-${c.id}`);
+  const rule = (dir: 'next' | 'prev', pseudo: 'old' | 'new', anim: string) =>
+    names.map((n) => `html[data-card-pager="${dir}"]::view-transition-${pseudo}(${n})`).join(',') +
+    `{animation:${anim} both}`;
+  return [
+    rule('next', 'old', 'da-out-left 0.24s ease-in'),
+    rule('next', 'new', 'da-in-right 0.28s ease-out'),
+    rule('prev', 'old', 'da-out-right 0.24s ease-in'),
+    rule('prev', 'new', 'da-in-left 0.28s ease-out'),
+  ].join('\n');
+})();
 ---
+
+<style set:html={cardScopeCSS}></style>
 
 <Layout
   title={`${card.name} · ${SITE.name}`}

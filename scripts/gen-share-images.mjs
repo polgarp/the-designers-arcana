@@ -101,9 +101,17 @@ function chips(card) {
 
 const SITE_URL = 'polgarp.com/the-designers-arcana';
 
+// The site's brandmark: a stroked outer lozenge + smaller filled inner
+// diamond, matching WindowChrome.astro's `.lozenge` SVG exactly.
+const lozenge = (size) =>
+  h('svg', { width: size, height: size, viewBox: '0 0 16 16' },
+    h('path', { d: 'M8 1 L15 8 L8 15 L1 8 Z', fill: 'none', stroke: C.house, 'stroke-width': 1.2 }),
+    h('path', { d: 'M8 4.5 L11.5 8 L8 11.5 L4.5 8 Z', fill: C.house }),
+  );
+
 const wordmark = () =>
   h('div', { style: { display: 'flex', alignItems: 'center', gap: 10 } },
-    h('div', { style: { display: 'flex', width: 12, height: 12, marginBottom: 5, background: C.house, transform: 'rotate(45deg)' } }),
+    h('div', { style: { display: 'flex' } }, lozenge(16)),
     h('div', { style: { fontFamily: 'Marcellus', fontSize: 22, lineHeight: 1, letterSpacing: 3, textTransform: 'uppercase', color: C.ink } }, "The Designer's Arcana"),
   );
 
@@ -136,11 +144,8 @@ function ogTree(card) {
 
 function portraitTree(card) {
   return frame(1080, 1350, 'column', 20,
-    // header: the card already shows its name, so just the tarot lineage
-    h('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 22 } },
+    h('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center' } },
       cardEl(card, 452, 678),
-      h('div', { style: { fontFamily: 'Plex', fontSize: 18, letterSpacing: 3, textTransform: 'uppercase', color: C.house, textAlign: 'center' } },
-        `${card.traditional_name}${card.arcana === 'major' ? ' · Major Arcana' : ''}`),
     ),
     // readings
     h('div', { style: { display: 'flex', flexDirection: 'column', gap: 16, borderTop: `1px solid ${C.ink30}`, paddingTop: 20, marginTop: 4 } },
@@ -171,7 +176,7 @@ function homeOgTree() {
     h('div', { style: { display: 'flex', alignItems: 'center' } }, back),
     h('div', { style: { display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center', gap: 16 } },
       h('div', { style: { display: 'flex', alignItems: 'center', gap: 10 } },
-        h('div', { style: { display: 'flex', width: 11, height: 11, marginBottom: 4, background: C.house, transform: 'rotate(45deg)' } }),
+        h('div', { style: { display: 'flex' } }, lozenge(16)),
         h('div', { style: { fontFamily: 'Plex', fontSize: 18, letterSpacing: 3, textTransform: 'uppercase', color: C.house } }, 'Product-design tarot'),
       ),
       h('div', { style: { fontFamily: 'Marcellus', fontSize: 64, color: C.ink, lineHeight: 1.0, marginTop: 2 } }, "The Designer's Arcana"),
