@@ -109,17 +109,31 @@ const lozenge = (size) =>
     h('path', { d: 'M8 4.5 L11.5 8 L8 11.5 L4.5 8 Z', fill: C.house }),
   );
 
-const wordmark = () =>
-  h('div', { style: { display: 'flex', alignItems: 'center', gap: 10 } },
-    h('div', { style: { display: 'flex' } }, lozenge(16)),
-    h('div', { style: { fontFamily: 'Marcellus', fontSize: 22, lineHeight: 1, letterSpacing: 3, textTransform: 'uppercase', color: C.ink } }, "The Designer's Arcana"),
+const wordmark = (scale = 1) =>
+  h('div', { style: { display: 'flex', alignItems: 'center', gap: 10 * scale } },
+    h('div', { style: { display: 'flex' } }, lozenge(16 * scale)),
+    h('div', { style: { fontFamily: 'Marcellus', fontSize: 22 * scale, lineHeight: 1, letterSpacing: 3, textTransform: 'uppercase', color: C.ink } }, "The Designer's Arcana"),
   );
 
 // A labelled reading block for the portrait info-image.
 function readBlock(name, text) {
-  return h('div', { style: { display: 'flex', flexDirection: 'column', gap: 6 } },
-    h('div', { style: { fontFamily: 'Plex', fontSize: 17, letterSpacing: 3, textTransform: 'uppercase', color: C.house } }, name),
-    h('div', { style: { fontFamily: 'Marcellus', fontSize: 25, color: C.ink, lineHeight: 1.38 } }, text),
+  return h('div', { style: { display: 'flex', flexDirection: 'column', gap: 5 } },
+    h('div', { style: { fontFamily: 'Plex', fontSize: 15, letterSpacing: 3, textTransform: 'uppercase', color: C.house } }, name),
+    h('div', { style: { fontFamily: 'Marcellus', fontSize: 20, color: C.ink, lineHeight: 1.4 } }, text),
+  );
+}
+
+// The flavor line as a proper pull-quote (mark + text side by side, off a
+// rule) instead of a lone italic paragraph — echoes the site's own
+// blockquote treatment ([id].astro's .flavor). A drawn diamond stands in
+// for that block's "✦" glyph — Satori only rasterizes glyphs actually
+// present in the three loaded fonts, and none of them carry it.
+function flavorBlock(text) {
+  return h('div', {
+    style: { display: 'flex', gap: 16, borderTop: `1px solid ${C.ink30}`, paddingTop: 18, marginTop: 2 },
+  },
+    h('div', { style: { display: 'flex', width: 9, height: 9, marginTop: 8, background: C.house, transform: 'rotate(45deg)', flexShrink: 0 } }),
+    h('div', { style: { display: 'flex', fontFamily: 'Spectral', fontStyle: 'italic', fontSize: 20, color: C.ink60, lineHeight: 1.45, flex: 1 } }, text),
   );
 }
 
@@ -143,21 +157,21 @@ function ogTree(card) {
 }
 
 function portraitTree(card) {
-  return frame(1080, 1350, 'column', 20,
+  return frame(1080, 1350, 'column', 22,
     h('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center' } },
-      cardEl(card, 452, 678),
+      cardEl(card, 560, 840),
     ),
     // readings
-    h('div', { style: { display: 'flex', flexDirection: 'column', gap: 16, borderTop: `1px solid ${C.ink30}`, paddingTop: 20, marginTop: 4 } },
+    h('div', { style: { display: 'flex', flexDirection: 'column', gap: 14, borderTop: `1px solid ${C.ink30}`, paddingTop: 18, marginTop: 4 } },
       readBlock('Upright', card.upright_meaning),
       readBlock('Reversed', card.reversed_meaning),
-      h('div', { style: { fontFamily: 'Spectral', fontStyle: 'italic', fontSize: 26, color: C.ink60, lineHeight: 1.4 } }, card.flavor_text),
+      flavorBlock(card.flavor_text),
     ),
     h('div', { style: { display: 'flex', flex: 1 } }),
     // footer: wordmark + the page link
-    h('div', { style: { display: 'flex', flexDirection: 'column', gap: 8, borderTop: `1px solid ${C.ink}`, paddingTop: 18 } },
-      wordmark(),
-      h('div', { style: { fontFamily: 'Plex', fontSize: 18, color: C.ink60 } }, `${SITE_URL}/cards/${card.id}`),
+    h('div', { style: { display: 'flex', flexDirection: 'column', gap: 7, borderTop: `1px solid ${C.ink}`, paddingTop: 16 } },
+      wordmark(0.75),
+      h('div', { style: { fontFamily: 'Plex', fontSize: 15, color: C.ink60 } }, `${SITE_URL}/cards/${card.id}`),
     ),
   );
 }
