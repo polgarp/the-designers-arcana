@@ -3,7 +3,7 @@ import Layout from '../../components/Layout.astro';
 import WindowChrome from '../../components/WindowChrome.astro';
 import CardTile from '../../components/CardTile.astro';
 import { detailCards, type Card } from '../../lib/cards';
-import { SITE, SUITS } from '../../config';
+import { SITE } from '../../config';
 import { withBase } from '../../lib/url';
 import { keywordThread } from '../../themes';
 
@@ -24,10 +24,9 @@ const canonical = new URL(withBase(`cards/${card.id}/`), Astro.site).href;
 const ogImg = new URL(withBase(`og/${card.id}.png`), Astro.site).href;
 const shareImg = withBase(`share/${card.id}.png`);
 
-// Minor names carry a "Three of Pencils — " rank/suit prefix that the
-// eyebrow already states; show only the proper name.
-const cleanName = (n: string) => n.split(' — ').at(-1)!;
-const arcanaLabel = card.arcana === 'major' ? 'Major Arcana' : SUITS[card.suit!].label;
+// The synced content's `name` is already just the card's proper title (no
+// rank/suit prefix to strip — see lib/cards.ts's rankOfSuit for that).
+const arcanaLabel = card.arcana === 'major' ? `Major Arcana · ${card.numeral}` : card.rankOfSuit;
 // Subtitle points to the real tarot card it descends from (not the suit
 // domain, which only repeats the eyebrow's suit name).
 const sub = `after ${card.traditional_name}`;
@@ -87,8 +86,8 @@ const cardScopeCSS = (() => {
           <!-- LEFT: the reading (scrolls; slides on prev/next) -->
           <div class="read" transition:animate={slideText}>
             <header class="chead">
-              <span class="chead__eyebrow label">{arcanaLabel} · {card.numeral}</span>
-              <h1 class="chead__name t-name">{cleanName(card.name)}</h1>
+              <span class="chead__eyebrow label">{arcanaLabel}</span>
+              <h1 class="chead__name t-name">{card.name}</h1>
               <p class="chead__sub t-italic">{sub}</p>
             </header>
 
@@ -147,9 +146,9 @@ const cardScopeCSS = (() => {
             </ul>
           </aside>
 
-          <dialog class="lightbox" aria-label={`${cleanName(card.name)} — enlarged`}>
+          <dialog class="lightbox" aria-label={`${card.name} — enlarged`}>
             <button class="lightbox__close" type="button" aria-label="Close">✕</button>
-            <img class="lightbox__img" src={card.artHref ?? card.backHref} alt={cleanName(card.name)} />
+            <img class="lightbox__img" src={card.artHref ?? card.backHref} alt={card.name} />
           </dialog>
         </div>
       </div>
@@ -157,11 +156,11 @@ const cardScopeCSS = (() => {
       <nav slot="footer" class="pager" aria-label="Card navigation">
         <a class="pager__link" href={withBase(`cards/${prev.id}/`)} data-pager="prev" rel="prev">
           <span class="label">Prev</span>
-          <span class="pager__name t-name">← {cleanName(prev.name)}</span>
+          <span class="pager__name t-name">← {prev.name}</span>
         </a>
         <a class="pager__link pager__link--next" href={withBase(`cards/${next.id}/`)} data-pager="next" rel="next">
           <span class="label">Next</span>
-          <span class="pager__name t-name">{cleanName(next.name)} →</span>
+          <span class="pager__name t-name">{next.name} →</span>
         </a>
       </nav>
     </WindowChrome>

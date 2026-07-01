@@ -23,6 +23,7 @@ export interface RawCard {
 
 export interface Card extends RawCard {
   numeral: string;       // display numeral: "II", "ACE", "QUEEN", "0"…
+  rankOfSuit: string | null; // minors only: "Two of Pixels", "Queen of Mugs"…
   ready: boolean;        // a finished art SVG exists
   artHref: string | null;   // full SVG (detail view)
   artThumb: string | null;  // raster thumbnail (gallery)
@@ -67,11 +68,24 @@ function numeralFor(c: RawCard): string {
   }
 }
 
+const RANK_WORD: Record<number, string> = {
+  1: 'Ace', 2: 'Two', 3: 'Three', 4: 'Four', 5: 'Five',
+  6: 'Six', 7: 'Seven', 8: 'Eight', 9: 'Nine', 10: 'Ten',
+  11: 'Page', 12: 'Knight', 13: 'Queen', 14: 'King',
+};
+// The traditional "Two of Pixels" phrasing. Built from suit + number, not
+// parsed out of `name` — the synced content's `name` is just the card's
+// proper title (e.g. "The Workshop"), with no rank/suit prefix to strip.
+function rankOfSuitFor(c: RawCard): string | null {
+  return c.arcana === 'minor' ? `${RANK_WORD[c.number]} of ${SUITS[c.suit!].label}` : null;
+}
+
 function decorate(c: RawCard): Card {
   const ready = existsSync(join(ART_DIR, `${c.id}.svg`));
   return {
     ...c,
     numeral: numeralFor(c),
+    rankOfSuit: rankOfSuitFor(c),
     ready,
     artHref: ready ? withBase(`cards/art/${c.id}.svg`) : null,
     artThumb: ready && existsSync(join(ART_DIR, `${c.id}-thumb.png`))
