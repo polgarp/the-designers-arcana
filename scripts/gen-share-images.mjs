@@ -39,6 +39,13 @@ const h = (type, props = {}, ...children) => {
   return { type, props: { ...props, children: children.flat() } };
 };
 
+// A display:block text leaf for use with `lineClamp`. Must pass `children`
+// as a raw string rather than h()'s array-wrapped form — Satori treats an
+// array (even one element) as "more than one child," which throws unless
+// display is flex/none/contents; block only clears that check with a bare
+// string.
+const clampedText = (text, style) => ({ type: 'div', props: { style, children: text } });
+
 const ROMAN = [[10,'X'],[9,'IX'],[8,'VIII'],[7,'VII'],[6,'VI'],[5,'V'],[4,'IV'],[3,'III'],[2,'II'],[1,'I']];
 const roman = (n) => { if (n === 0) return '0'; let o = ''; for (const [v,s] of ROMAN) while (n>=v){o+=s;n-=v;} return o; };
 const numeralFor = (c) => {
@@ -115,11 +122,12 @@ const wordmark = (scale = 1) =>
     h('div', { style: { fontFamily: 'Marcellus', fontSize: 22 * scale, lineHeight: 1, letterSpacing: 3, textTransform: 'uppercase', color: C.ink } }, "The Designer's Arcana"),
   );
 
-// A labelled reading block for the portrait info-image.
-function readBlock(name, text) {
+// A labelled reading block for the portrait info-image. Clamped to `lines`
+// so copy length can never push the footer past the frame (see flavorBlock).
+function readBlock(name, text, lines = 2) {
   return h('div', { style: { display: 'flex', flexDirection: 'column', gap: 5 } },
     h('div', { style: { fontFamily: 'Plex', fontSize: 15, letterSpacing: 3, textTransform: 'uppercase', color: C.house } }, name),
-    h('div', { style: { fontFamily: 'Marcellus', fontSize: 20, color: C.ink, lineHeight: 1.4 } }, text),
+    clampedText(text, { display: 'block', fontFamily: 'Marcellus', fontSize: 20, color: C.ink, lineHeight: 1.4, lineClamp: lines }),
   );
 }
 
@@ -128,12 +136,12 @@ function readBlock(name, text) {
 // blockquote treatment ([id].astro's .flavor). A drawn diamond stands in
 // for that block's "✦" glyph — Satori only rasterizes glyphs actually
 // present in the three loaded fonts, and none of them carry it.
-function flavorBlock(text) {
+function flavorBlock(text, lines = 2) {
   return h('div', {
-    style: { display: 'flex', gap: 16, borderTop: `1px solid ${C.ink30}`, paddingTop: 18, marginTop: 2 },
+    style: { display: 'flex', gap: 16, borderTop: `1px solid ${C.ink30}`, paddingTop: 14, marginTop: 0 },
   },
-    h('div', { style: { display: 'flex', width: 9, height: 9, marginTop: 8, background: C.house, transform: 'rotate(45deg)', flexShrink: 0 } }),
-    h('div', { style: { display: 'flex', fontFamily: 'Spectral', fontStyle: 'italic', fontSize: 20, color: C.ink60, lineHeight: 1.45, flex: 1 } }, text),
+    h('div', { style: { display: 'flex', width: 9, height: 9, marginTop: 4, background: C.house, transform: 'rotate(45deg)', flexShrink: 0 } }),
+    clampedText(text, { display: 'block', fontFamily: 'Spectral', fontStyle: 'italic', fontSize: 20, color: C.ink60, lineHeight: 1.45, flex: 1, lineClamp: lines }),
   );
 }
 
@@ -161,8 +169,15 @@ function portraitTree(card) {
     h('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center' } },
       cardEl(card, 560, 840),
     ),
-    // readings
-    h('div', { style: { display: 'flex', flexDirection: 'column', gap: 14, borderTop: `1px solid ${C.ink30}`, paddingTop: 18, marginTop: 4 } },
+    // readings — each block's lineClamp bounds it to a fixed line count, so
+    // the combined height is deterministic regardless of copy length and
+    // the footer below can never be pushed past the frame.
+    h('div', {
+      style: {
+        display: 'flex', flexDirection: 'column', gap: 10, borderTop: `1px solid ${C.ink30}`,
+        paddingTop: 14, marginTop: 2,
+      },
+    },
       readBlock('Upright', card.upright_meaning),
       readBlock('Reversed', card.reversed_meaning),
       flavorBlock(card.flavor_text),
