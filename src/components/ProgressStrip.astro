@@ -44,12 +44,12 @@ const pct = Math.round((progress.all.ready / progress.all.total) * 100);
   }
   .strip__count { display: flex; align-items: baseline; gap: 0.5rem; }
   .strip__num { font-size: 1.6rem; color: var(--ink); line-height: 1; }
-  .strip__of { font-size: 0.7rem; }
+  .strip__of { font-size: var(--fs-xs); }
   .strip__pct { color: var(--house); }
 
   .strip__bars { display: flex; gap: 1.4rem; flex-wrap: wrap; }
   .bar { display: grid; grid-template-columns: auto 70px auto; align-items: center; gap: 0.5rem; }
-  .bar__label { font-size: 0.6rem; }
+  .bar__label { font-size: var(--fs-xs); }
   .bar__track {
     height: 4px;
     background: var(--ink-30);
@@ -57,7 +57,7 @@ const pct = Math.round((progress.all.ready / progress.all.total) * 100);
     display: block;
   }
   .bar__fill { position: absolute; inset: 0 auto 0 0; background: var(--c); }
-  .bar__n { font-size: 0.6rem; color: var(--ink-60); }
+  .bar__n { font-size: var(--fs-xs); color: var(--ink-60); }
 
   @media (max-width: 720px) {
     .strip__bars { gap: 0.8rem 1.2rem; }

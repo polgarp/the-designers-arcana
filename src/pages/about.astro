@@ -63,7 +63,7 @@ import { withBase } from '../lib/url';
   .back {
     display: inline-block;
     font-family: var(--font-ui);
-    font-size: 0.7rem;
+    font-size: var(--fs-xs);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--ink-60);
@@ -71,6 +71,10 @@ import { withBase } from '../lib/url';
     margin-bottom: 2rem;
   }
   .back:hover { color: var(--house); }
+  @media (pointer: coarse) {
+    .back { min-height: 44px; display: inline-flex; align-items: center; margin-bottom: 1.4rem; }
+    .colophon__link { display: inline-flex; align-items: center; min-height: 44px; }
+  }
 
   .lead {
     font-size: clamp(1.4rem, 3.4vw, 2rem);
@@ -79,7 +83,10 @@ import { withBase } from '../lib/url';
     margin: 0 0 2rem;
     max-width: 34ch;
   }
-  .prose p { font-family: var(--font-name); font-size: 1.02rem; line-height: 1.65; color: var(--ink); max-width: 60ch; }
+  /* 46ch, not the ~65 the number suggests: `ch` is the width of "0", and
+     Marcellus's zero is far wider than its average lowercase letter, so 60ch
+     was rendering ~93 characters per line. 46ch lands at ~71. */
+  .prose p { font-family: var(--font-name); font-size: 1.02rem; line-height: 1.65; color: var(--ink); max-width: 46ch; }
   .prose em { font-style: italic; }
 
   .suits {
@@ -98,7 +105,7 @@ import { withBase } from '../lib/url';
   }
   .suit__domain {
     margin: 0; padding-left: 1rem;
-    font-family: var(--font-ui); font-size: 0.74rem; letter-spacing: 0.02em; color: var(--ink-60);
+    font-family: var(--font-ui); font-size: var(--fs-xs); letter-spacing: 0.02em; color: var(--ink-60);
   }
 
   .reveal strong { color: var(--house); font-weight: inherit; }

@@ -60,11 +60,20 @@ const cardScopeCSS = (() => {
   const rule = (dir: 'next' | 'prev', pseudo: 'old' | 'new', anim: string) =>
     names.map((n) => `html[data-card-pager="${dir}"]::view-transition-${pseudo}(${n})`).join(',') +
     `{animation:${anim} both}`;
+  // The gallery→detail morph is the browser's own view-transition-group
+  // animation, not one of the da-* keyframes, so flattening those doesn't
+  // reach it. Under reduced motion the card cross-fades into place instead of
+  // travelling and resizing across the viewport.
+  const stillGroups =
+    `@media (prefers-reduced-motion: reduce){` +
+    names.map((n) => `::view-transition-group(${n})`).join(',') +
+    `{animation-name:none}}`;
   return [
     rule('next', 'old', 'da-out-left 0.24s ease-in'),
     rule('next', 'new', 'da-in-right 0.28s ease-out'),
     rule('prev', 'old', 'da-out-right 0.24s ease-in'),
     rule('prev', 'new', 'da-in-left 0.28s ease-out'),
+    stillGroups,
   ].join('\n');
 })();
 ---
@@ -205,6 +214,9 @@ const cardScopeCSS = (() => {
     flex: none;
   }
   .back:hover { color: var(--house); }
+  @media (pointer: coarse) {
+    .back { min-height: 44px; display: inline-flex; align-items: center; margin-bottom: 1.1rem; }
+  }
 
   /* text left (scrolls), card right (static) */
   .cols {
@@ -295,7 +307,7 @@ const cardScopeCSS = (() => {
     align-items: center;
     gap: 0.25rem;
     font-family: var(--font-ui);
-    font-size: var(--fs-2xs);
+    font-size: var(--fs-xs);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--ink-60);
@@ -349,17 +361,23 @@ const cardScopeCSS = (() => {
   .lightbox__close:hover { background: rgba(27, 34, 51, 0.7); }
   .kw { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
   .kw-tag {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     font-family: var(--font-ui);
-    font-size: var(--fs-2xs);
+    font-size: var(--fs-xs);
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--ink-60);
     text-decoration: none;
     border: 1px solid var(--ink-30);
     border-radius: 999px;
-    padding: 0.22rem 0.6rem;
+    padding: 0.3rem 0.7rem;
     transition: border-color 140ms ease, color 140ms ease;
+  }
+  /* these are the only route into the motif pages, and they land on phones */
+  @media (pointer: coarse) {
+    .kw { gap: 0.5rem; }
+    .kw-tag { min-height: 44px; padding-inline: 0.9rem; }
   }
   .kw-tag:hover { color: var(--house); border-color: var(--house); }
   .kw-tag--lead { color: var(--house); border-color: var(--house); }
@@ -377,7 +395,7 @@ const cardScopeCSS = (() => {
     padding-top: 1.2rem;
     border-top: 1px solid var(--ink);
   }
-  .pager__link { display: flex; flex-direction: column; gap: 0.25rem; text-decoration: none; color: var(--ink); min-width: 0; }
+  .pager__link { display: flex; flex-direction: column; justify-content: center; gap: 0.25rem; min-height: 44px; text-decoration: none; color: var(--ink); min-width: 0; }
   .pager__link--next { text-align: right; align-items: flex-end; }
   .pager__name { font-size: var(--fs-sm); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 40vw; }
   .pager__link:hover .pager__name { color: var(--house); }

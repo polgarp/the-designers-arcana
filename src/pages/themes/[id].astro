@@ -98,6 +98,9 @@ const threadTags = [...present].sort();
     margin-bottom: 2rem;
   }
   .back:hover { color: var(--house); }
+  @media (pointer: coarse) {
+    .back { min-height: 44px; display: inline-flex; align-items: center; margin-bottom: 1.4rem; }
+  }
 
   .thead { display: flex; flex-direction: column; margin-bottom: 2.4rem; }
   .thead__name { font-size: var(--fs-xl); line-height: 1.05; margin: 0.5rem 0 0; color: var(--ink); }
@@ -108,13 +111,13 @@ const threadTags = [...present].sort();
   .threadtags { list-style: none; margin: 1.1rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; max-width: 72ch; }
   .threadtag {
     font-family: var(--font-ui);
-    font-size: var(--fs-2xs);
+    font-size: var(--fs-xs);
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--house);
     border: 1px solid var(--house);
     border-radius: 999px;
-    padding: 0.2rem 0.6rem;
+    padding: 0.3rem 0.7rem;
   }
 
   .related { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
@@ -136,25 +139,32 @@ const threadTags = [...present].sort();
     width: fit-content;
   }
   .rel__name:hover { color: var(--house); }
-  .rel__sealed { color: var(--ink-30); }
+  /* --ink-30 is a rule colour: 2.07:1 on cream, unreadable as text */
+  .rel__sealed { color: var(--ink-60); }
 
   .kw { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
   .kw-tag {
     display: inline-block;
     font-family: var(--font-ui);
-    font-size: var(--fs-2xs);
+    font-size: var(--fs-xs);
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--ink-60);
     text-decoration: none;
     border: 1px solid var(--ink-30);
     border-radius: 999px;
-    padding: 0.2rem 0.6rem;
+    padding: 0.3rem 0.7rem;
     transition: border-color 140ms ease, color 140ms ease;
   }
   .kw-tag:hover { color: var(--house); border-color: var(--house); }
   /* tags that connect this card to the current grouping */
   .kw-tag--in { color: var(--house); border-color: var(--house); }
+
+  @media (pointer: coarse) {
+    .kw { gap: 0.5rem; }
+    .kw-tag { display: inline-flex; align-items: center; min-height: 44px; padding-inline: 0.9rem; }
+    .rel__name { min-height: 44px; display: inline-flex; align-items: center; }
+  }
 
   @media (max-width: 520px) {
     .rel { grid-template-columns: 56px 1fr; gap: 0.9rem; }

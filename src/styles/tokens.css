@@ -36,7 +36,9 @@
   --name-tracking: 0.04em;
 
   /* — Type scale (one ladder; stop inventing sizes) — */
-  --fs-2xs: 0.625rem;   /* 10px · micro labels, chips */
+  --fs-2xs: 0.625rem;   /* 10px · decorative marks only — below the 11px
+                           legibility floor, so never on text a reader has to
+                           act on or navigate by */
   --fs-xs:  0.75rem;    /* 12px · ui, captions, eyebrow */
   --fs-sm:  0.875rem;   /* 14px · secondary text */
   --fs-base: 1rem;      /* 16px · body / readings */
@@ -109,17 +111,32 @@ body {
    in src/pages/cards/[id].astro (cardScopeCSS) — it needs every card's
    exact view-transition-name, which isn't known here. */
 
+/* — Reduced motion —
+   Travel goes; feedback stays. The paging slide flattens to a cross-fade and
+   the card stops rising under the cursor, but colour, opacity and the fade
+   between pages still confirm that something happened. A blanket
+   animation:none would take the confirmation with it. */
+@media (prefers-reduced-motion: reduce) {
+  @keyframes da-out-left  { to   { opacity: 0; } }
+  @keyframes da-in-right  { from { opacity: 0; } }
+  @keyframes da-out-right { to   { opacity: 0; } }
+  @keyframes da-in-left   { from { opacity: 0; } }
+}
+
 /* — Type voices — */
 .t-display { font-family: var(--font-display); }
 .t-name { font-family: var(--font-name); }
 .t-ui { font-family: var(--font-ui); }
 .t-italic { font-family: var(--font-italic); font-style: italic; }
 
+/* The chrome voice. It reads as small because of the tracking and the case,
+   not because of the point size — eyebrows, counts and pager labels are text
+   people navigate by, so they sit at the 12px floor, not below it. */
 .label {
   font-family: var(--font-ui);
   text-transform: uppercase;
   letter-spacing: var(--ui-tracking);
-  font-size: var(--fs-2xs);
+  font-size: var(--fs-xs);
   color: var(--ink-60);
   font-weight: 500;
 }

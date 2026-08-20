@@ -97,12 +97,14 @@ const hasFooter = Astro.slots.has('footer');
   }
   .brand__ver {
     font-family: var(--font-ui);
-    font-size: 0.62rem;
+    font-size: var(--fs-xs);
     letter-spacing: 0.1em;
     color: var(--house);
     text-transform: uppercase;
   }
-  .brand__sep { color: var(--ink-30); font-family: var(--font-ui); }
+  /* --ink-30 is a rule colour, not a text colour: on cream it lands at
+     2.07:1, well under the 4.5:1 floor */
+  .brand__sep { color: var(--ink-60); font-family: var(--font-ui); }
   .brand__tag {
     font-size: 0.82rem;
     color: var(--ink-60);
@@ -115,12 +117,23 @@ const hasFooter = Astro.slots.has('footer');
     font-family: var(--font-ui);
     text-transform: uppercase;
     letter-spacing: 0.14em;
-    font-size: 0.66rem;
+    font-size: var(--fs-xs);
     color: var(--ink-60);
     text-decoration: none;
     padding-bottom: 2px;
     border-bottom: 1px solid transparent;
     transition: color 140ms ease, border-color 140ms ease;
+  }
+  /* the marks stay small; the targets that carry them do not */
+  @media (pointer: coarse) {
+    .about {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding-inline: 0.4rem;
+      margin-inline-end: -0.4rem;
+    }
+    .brand { min-height: 44px; align-content: center; }
   }
   .about:hover { color: var(--house); border-bottom-color: var(--house); }
 
