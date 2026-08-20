@@ -13,6 +13,10 @@ import { withBase } from '../lib/url';
       <a class="back" href={withBase()}>← All cards</a>
 
       <article class="about">
+        {/* Deliberately the same premise the index masthead carries. About is
+            a landing page in its own right — shared card and motif links reach
+            it without ever passing the homepage — so it states what this is
+            before it explains how it's built. */}
         <h1 class="lead t-italic">
           A tarot for people who ship. Seventy-eight cards for the parts of
           being a product designer no one warns you about.
@@ -84,6 +88,7 @@ import { withBase } from '../lib/url';
     color: var(--ink);
     margin: 0 0 2rem;
     max-width: 34ch;
+    text-wrap: pretty;
   }
   /* 46ch, not the ~65 the number suggests: `ch` is the width of "0", and
      Marcellus's zero is far wider than its average lowercase letter, so 60ch
