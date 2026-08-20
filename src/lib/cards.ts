@@ -99,6 +99,23 @@ function decorate(c: RawCard): Card {
 }
 
 export const cards: Card[] = deck.cards.map(decorate);
+
+// A ready card with no raster thumbnail silently falls back to its full SVG,
+// which the gallery then crushes into a ~130px tile — thin strokes alias and
+// the plate looks pixellated next to its neighbours. Readiness is resolved by
+// existsSync at module-evaluation time, so a dev server that was already
+// running when new art synced keeps serving the fallback until it restarts.
+// Say so rather than letting it look like a design problem.
+{
+  const missing = cards.filter((c) => c.ready && !c.artThumb).map((c) => c.id);
+  if (missing.length) {
+    console.warn(
+      `[cards] ${missing.length} illustrated card(s) have no -thumb.png and will ` +
+        `render the full SVG in the gallery: ${missing.join(', ')}\n` +
+        `        Run \`npm run images\`, then restart the dev server.`,
+    );
+  }
+}
 export const byId = new Map(cards.map((c) => [c.id, c]));
 
 export const majors = cards

@@ -43,13 +43,15 @@ const sealed = variant === 'gallery' && !ready;
   data-suit={suit ?? 'none'}
   href={linkable ? href : undefined}
   role={linkable ? undefined : 'img'}
-  aria-label={ready ? name : 'Unrevealed card'}
+  aria-label={ready ? name : 'Sealed card'}
   style={transitionName ? `view-transition-name:${transitionName}` : undefined}
 >
   {ready && artHref ? (
     <img class="tile__plate" src={artHref} alt={name} />
   ) : backHref ? (
-    <img class="tile__plate" src={backHref} alt="Card back" loading="lazy" />
+    /* the wrapper already carries the accessible name ("Sealed card"); a
+       second one on the image just makes screen readers say it twice */
+    <img class="tile__plate" src={backHref} alt="" loading="lazy" />
   ) : (
     <CardBack />
   )}

@@ -77,6 +77,10 @@ body {
   padding: clamp(1rem, 3vw, 2.5rem);
 }
 
+/* — browser surfaces: the parts we didn't draw still belong to the deck — */
+::selection { background: color-mix(in srgb, var(--house) 20%, transparent); color: var(--ink); }
+:where(html) { scrollbar-color: var(--ink-30) transparent; }
+
 /* — a11y: visible keyboard focus + screen-reader-only text — */
 :where(a, button, [tabindex]):focus-visible {
   outline: 2px solid var(--house);

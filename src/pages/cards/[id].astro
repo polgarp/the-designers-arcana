@@ -92,7 +92,12 @@ const cardScopeCSS = (() => {
         <a class="back" href={withBase()}>← All cards</a>
 
         <div class="cols">
-          <!-- LEFT: the reading (scrolls; slides on prev/next) -->
+          <!-- LEFT: the reading (scrolls; slides on prev/next).
+               The wrapper exists so the "more" cue can sit outside .read —
+               .read carries a mask, and a mask applies to the whole element,
+               so anything pinned to its bottom edge fades out with the text
+               it's meant to be pointing at. -->
+          <div class="readwrap">
           <div class="read" transition:animate={slideText}>
             <header class="chead">
               <span class="chead__eyebrow label">{arcanaLabel}</span>
@@ -129,25 +134,44 @@ const cardScopeCSS = (() => {
               </figure>
             )}
           </div>
+          <span class="read__more" aria-hidden="true">↓ More</span>
+          </div>
 
           <!-- RIGHT: the card (stays in place), with its keyword tags -->
           <aside class="cardcol">
-            <button class="cardzoom" type="button" aria-label="Zoom in on the card">
-              <CardTile
-                name={card.name}
-                suit={card.suit}
-                ready={card.ready}
-                artHref={card.artHref}
-                backHref={card.backHref}
-                transitionName={`card-${card.id}`}
-              />
-              <span class="cardzoom__hint" aria-hidden="true">⤢ Zoom</span>
-            </button>
+            {/* Only an illustrated plate has anything to enlarge. Offering
+                zoom on a card back promises a reveal the page can't pay. */}
+            <Fragment>
+              {card.ready ? (
+                <button class="cardzoom" type="button" aria-label={`Enlarge ${card.name}`}>
+                  <CardTile
+                    name={card.name}
+                    suit={card.suit}
+                    ready={card.ready}
+                    artHref={card.artHref}
+                    backHref={card.backHref}
+                    transitionName={`card-${card.id}`}
+                  />
+                  <span class="cardzoom__hint" aria-hidden="true">⤢ Zoom</span>
+                </button>
+              ) : (
+                <div class="cardzoom cardzoom--static">
+                  <CardTile
+                    name={card.name}
+                    suit={card.suit}
+                    ready={card.ready}
+                    artHref={card.artHref}
+                    backHref={card.backHref}
+                    transitionName={`card-${card.id}`}
+                  />
+                </div>
+              )}
+            </Fragment>
             <ul class="kw" aria-label="Keywords — tap to explore related cards">
-              {card.keywords.map((k, i) => (
+              {card.keywords.map((k) => (
                 <li>
                   <a
-                    class:list={['kw-tag', { 'kw-tag--lead': i === 0 }]}
+                    class="kw-tag"
                     href={withBase(`themes/${keywordThread(k) ?? card.threads[0]}/`)}
                   >{k}</a>
                 </li>
@@ -181,13 +205,21 @@ const cardScopeCSS = (() => {
   function initReadFade() {
     const read = document.querySelector<HTMLElement>('.read');
     if (!read) return;
-    const update = () => read.toggleAttribute('data-scrolled', read.scrollTop > 6);
+    const update = () => {
+      read.toggleAttribute('data-scrolled', read.scrollTop > 6);
+      // the column clips silently on desktop; macOS overlay scrollbars only
+      // appear mid-scroll, so the "more" cue is what actually says so
+      const remaining = read.scrollHeight - read.clientHeight - read.scrollTop;
+      read.toggleAttribute('data-more', remaining > 24);
+    };
     read.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
     update();
   }
-  // Click the card to enlarge it in a lightbox.
+  // Click the card to enlarge it in a lightbox. Only illustrated cards render
+  // a <button class="cardzoom">; a sealed card's wrapper is an inert div.
   function initZoom() {
-    const btn = document.querySelector<HTMLElement>('.cardzoom');
+    const btn = document.querySelector<HTMLButtonElement>('button.cardzoom');
     const dlg = document.querySelector<HTMLDialogElement>('.lightbox');
     if (!btn || !dlg) return;
     btn.addEventListener('click', () => dlg.showModal());
@@ -228,7 +260,9 @@ const cardScopeCSS = (() => {
   }
 
   /* — left reading column: the scroll region — */
+  .readwrap { position: relative; display: flex; flex-direction: column; min-height: 0; }
   .read {
+    flex: 1;
     min-height: 0;
     overflow-y: auto;
     padding-right: 0.8rem;
@@ -241,9 +275,48 @@ const cardScopeCSS = (() => {
     transition: --top-fade 0.18s ease;
     mask-image: linear-gradient(to bottom, transparent 0, #000 var(--top-fade), #000 calc(100% - 30px), transparent 100%);
     -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 var(--top-fade), #000 calc(100% - 30px), transparent 100%);
+    /* The fade alone wasn't enough of a cue that "The parallel" continues
+       below — this column needs a bar that's always there.
+       Deliberately NOT using scrollbar-width/scrollbar-color here: setting
+       either makes Chrome ignore ::-webkit-scrollbar, and the standard
+       properties honour the macOS "show scrollbars only when scrolling"
+       default, which hides the affordance exactly when it's needed. The
+       webkit pseudo-elements force a persistent bar; Firefox falls back to
+       its own always-visible scrollbar. */
   }
+  .read::-webkit-scrollbar { width: 7px; }
+  .read::-webkit-scrollbar-track { background: transparent; }
+  .read::-webkit-scrollbar-thumb {
+    background: var(--ink-30);
+    border-radius: 99px;
+  }
+  .read:hover::-webkit-scrollbar-thumb { background: var(--ink-60); }
   .read[data-scrolled] { --top-fade: 18px; }
   .read > * { max-width: 58ch; }
+
+  /* Pinned to the bottom of the wrapper, over the fade band — the text there
+     is already dissolving, so the chip covers nothing legible, and the fade
+     that hints at more content now has something that names it. */
+  .read__more {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    padding: 0.25rem 0.7rem;
+    background: var(--cream);
+    border: var(--hairline) solid var(--ink-30);
+    border-radius: 999px;
+    font-family: var(--font-ui);
+    font-size: var(--fs-xs);
+    letter-spacing: var(--ui-tracking);
+    text-transform: uppercase;
+    color: var(--ink-60);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+  .readwrap:has(.read[data-more]) .read__more { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { .read__more { transition: none; } }
 
   .chead { display: flex; flex-direction: column; }
   .chead__eyebrow { margin-bottom: 0.7rem; }
@@ -284,8 +357,13 @@ const cardScopeCSS = (() => {
     padding: 0;
     border: none;
     background: none;
+    /* buttons don't inherit the page face — without this the control falls
+       through to the UA's own sans and leaves the type system */
+    font: inherit;
+    color: inherit;
     cursor: zoom-in;
   }
+  .cardzoom--static { cursor: default; }
   .cardzoom :global(.tile) {
     width: auto; height: auto;
     max-width: 100%; max-height: 100%;
@@ -355,7 +433,9 @@ const cardScopeCSS = (() => {
     border: 1px solid rgba(239, 232, 218, 0.5);
     background: rgba(27, 34, 51, 0.4);
     color: var(--cream);
-    font-size: 1rem;
+    font-family: var(--font-ui);
+    font-size: var(--fs-base);
+    line-height: 1;
     cursor: pointer;
   }
   .lightbox__close:hover { background: rgba(27, 34, 51, 0.7); }
@@ -380,7 +460,6 @@ const cardScopeCSS = (() => {
     .kw-tag { min-height: 44px; padding-inline: 0.9rem; }
   }
   .kw-tag:hover { color: var(--house); border-color: var(--house); }
-  .kw-tag--lead { color: var(--house); border-color: var(--house); }
 
   .share { margin: 0.4rem 0 0; display: flex; gap: 0.9rem; align-items: flex-start; padding-top: 1.1rem; border-top: 1px solid var(--ink-30); }
   .share__img { display: block; border: 1px solid var(--ink-30); height: auto; flex: none; }
@@ -403,6 +482,14 @@ const cardScopeCSS = (() => {
   @media (max-width: 720px) {
     .cols { grid-template-columns: 1fr; }
     .read { overflow: visible; mask-image: none; -webkit-mask-image: none; padding-right: 0; }
-    .cardcol { order: -1; max-width: 300px; }
+    /* `display: contents` promotes the card and its keywords to siblings of
+       the reading column, so the card can lead while the keywords fall in
+       after the reading. Moving the whole column put five uppercase pills
+       between the art and the card's own name, where they read as filters. */
+    .cardcol { display: contents; }
+    .cardzoom { order: -1; max-width: 300px; margin-bottom: 1.4rem; }
+    .kw { order: 1; margin-top: 1.6rem; }
+    /* nothing scrolls independently here, so the cue has nothing to say */
+    .read__more { display: none; }
   }
 </style>

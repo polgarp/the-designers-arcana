@@ -59,7 +59,9 @@ import { withBase } from '../lib/url';
 </Layout>
 
 <style>
-  .colwrap { max-width: 760px; margin: 0 auto; }
+  /* flush left, like every other page — centring this column left the
+     wordmark above it hanging ~120px to the side */
+  .colwrap { max-width: 760px; }
   .back {
     display: inline-block;
     font-family: var(--font-ui);
@@ -86,7 +88,7 @@ import { withBase } from '../lib/url';
   /* 46ch, not the ~65 the number suggests: `ch` is the width of "0", and
      Marcellus's zero is far wider than its average lowercase letter, so 60ch
      was rendering ~93 characters per line. 46ch lands at ~71. */
-  .prose p { font-family: var(--font-name); font-size: 1.02rem; line-height: 1.65; color: var(--ink); max-width: 46ch; }
+  .prose p { font-family: var(--font-name); font-size: var(--fs-base); line-height: 1.65; color: var(--ink); max-width: 46ch; }
   .prose em { font-style: italic; }
 
   .suits {
@@ -97,7 +99,7 @@ import { withBase } from '../lib/url';
   }
   .suit { display: flex; flex-direction: column; gap: 0.2rem; }
   .suit__name {
-    font-size: 1.05rem; color: var(--ink); position: relative; padding-left: 1rem;
+    font-size: var(--fs-base); color: var(--ink); position: relative; padding-left: 1rem;
   }
   .suit__name::before {
     content: ''; position: absolute; left: 0; top: 0.55em;
