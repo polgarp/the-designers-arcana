@@ -14,16 +14,30 @@ interface Props {
   backHref?: string | null;   // real synced _back.svg, if present
   href?: string;
   transitionName?: string;    // shared name → morphs gallery tile ↔ detail card
+  variant?: 'gallery' | 'stage';
 }
-const { name, suit = null, ready = false, artHref, backHref, href, transitionName } = Astro.props;
+const {
+  name,
+  suit = null,
+  ready = false,
+  artHref,
+  backHref,
+  href,
+  transitionName,
+  variant = 'stage',
+} = Astro.props;
 
 const dev = import.meta.env.DEV;
 const linkable = href && (ready || dev);
 const Tag = linkable ? 'a' : 'div';
+// In the gallery a face-down card is held back: it sits flat and quiet so the
+// finished plates carry the page. On the detail stage the back is the subject,
+// so it keeps full strength.
+const sealed = variant === 'gallery' && !ready;
 ---
 
 <Tag
-  class="tile"
+  class:list={['tile', { 'tile--sealed': sealed }]}
   data-ready={String(ready)}
   data-arcana={suit ? 'minor' : 'major'}
   data-suit={suit ?? 'none'}
@@ -33,12 +47,13 @@ const Tag = linkable ? 'a' : 'div';
   style={transitionName ? `view-transition-name:${transitionName}` : undefined}
 >
   {ready && artHref ? (
-    <img class="tile__plate" src={artHref} alt={name} loading="lazy" />
+    <img class="tile__plate" src={artHref} alt={name} />
   ) : backHref ? (
     <img class="tile__plate" src={backHref} alt="Card back" loading="lazy" />
   ) : (
     <CardBack />
   )}
+  {sealed && <span class="tile__seal" aria-hidden="true">Sealed</span>}
 </Tag>
 
 <style>
@@ -58,6 +73,52 @@ const Tag = linkable ? 'a' : 'div';
             drop-shadow(0 10px 20px rgba(27, 34, 51, 0.24));
   }
   a.tile:focus-visible { outline: 2px solid var(--house); outline-offset: 4px; }
-  .tile__plate { width: 100%; height: 100%; object-fit: contain; display: block; filter: var(--card-lift); transition: filter 160ms ease; }
-  .tile :global(svg.back) { filter: var(--card-lift); }
+  .tile__plate { width: 100%; height: 100%; object-fit: contain; display: block; filter: var(--card-lift); transition: filter 160ms ease, opacity 200ms ease; }
+  .tile :global(svg.back) { filter: var(--card-lift); transition: filter 160ms ease, opacity 200ms ease; }
+
+  /* — Face-down in the gallery —
+     Depth is the tell: a revealed plate lifts off the cream, a sealed card
+     lies flat on it. Hovering turns the card up to full strength and names
+     what's being withheld, in the same place a finished plate carries its
+     title cartouche. */
+  .tile--sealed .tile__plate,
+  .tile--sealed :global(svg.back) {
+    opacity: 0.5;
+    filter: none;
+  }
+  .tile__seal {
+    position: absolute;
+    left: 50%;
+    bottom: 7%;
+    transform: translate(-50%, 4px);
+    opacity: 0;
+    pointer-events: none;
+    background: var(--paper);
+    border: var(--hairline) solid var(--ink);
+    padding: 0.3em 0.7em;
+    font-family: var(--font-ui);
+    font-size: var(--fs-xs);
+    letter-spacing: var(--ui-tracking);
+    text-transform: uppercase;
+    color: var(--ink-60);
+    white-space: nowrap;
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+
+  @media (hover: hover) {
+    .tile--sealed:hover .tile__plate,
+    .tile--sealed:hover :global(svg.back) {
+      opacity: 1;
+      filter: var(--card-lift);
+    }
+    .tile--sealed:hover .tile__seal { opacity: 1; transform: translate(-50%, 0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tile,
+    .tile__plate,
+    .tile :global(svg.back),
+    .tile__seal { transition: none; }
+    a.tile:hover { transform: none; }
+  }
 </style>

@@ -134,4 +134,42 @@ const groups = [
     display: inline-block;
     flex: none;
   }
+
+  /* On narrow screens the rail stops being a column beside the grid and
+     becomes a band above it — otherwise nine stacked labels push the first
+     card most of a screen down. Targets grow to 44px here, where taps land. */
+  @media (max-width: 680px) {
+    /* min-width:0 — as a grid item the rail defaults to min-content width,
+       which would let the single-line option rows push the page sideways
+       instead of scrolling inside themselves */
+    .filters { gap: 0; min-width: 0; }
+    .filters__group {
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 0 0.85rem;
+    }
+    /* the label holds the line start and the options run past the edge in a
+       single line — wrapping them costs more vertical room than the whole
+       masthead, and the first card has to stay in the opening screen. The
+       right-edge fade says there's more. */
+    .filters__opts {
+      flex: 1 1 0;
+      min-width: 0;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: center;
+      gap: 0 1.1rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent 100%);
+    }
+    .filters__opts::-webkit-scrollbar { display: none; }
+    .opt {
+      min-height: 44px;
+      font-size: var(--fs-sm);
+      white-space: nowrap;
+    }
+  }
 </style>

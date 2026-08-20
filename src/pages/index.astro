@@ -4,7 +4,7 @@ import WindowChrome from '../components/WindowChrome.astro';
 import FilterRail from '../components/FilterRail.astro';
 import CardTile from '../components/CardTile.astro';
 import ProgressStrip from '../components/ProgressStrip.astro';
-import { majors, minorsBySuit, suitOrder, type Card } from '../lib/cards';
+import { majors, minorsBySuit, suitOrder, progress, type Card } from '../lib/cards';
 import { SITE, SUITS } from '../config';
 import { withBase } from '../lib/url';
 
@@ -21,7 +21,20 @@ const sections: { title: string; sub: string; cards: Card[] }[] = [
 <Layout title={`${SITE.name} · ${SITE.tagline}`}>
   <main class="shell">
     <WindowChrome>
-      <h1 class="sr-only">{SITE.name} — the deck</h1>
+      <header class="masthead">
+        <h1 class="masthead__lead t-italic">A tarot for people who ship.</h1>
+        <p class="masthead__sub t-name">
+          Seventy-eight cards for the parts of being a product designer no one
+          warns you about.
+        </p>
+        <p class="masthead__status label">
+          Illustrated one plate at a time —
+          <span class="masthead__count">
+            <strong>{progress.all.ready} of {progress.all.total}</strong> revealed
+          </span>
+        </p>
+      </header>
+
       <div class="gallery">
         <FilterRail />
 
@@ -37,6 +50,7 @@ const sections: { title: string; sub: string; cards: Card[] }[] = [
               <div class="grid">
                 {sec.cards.map((c) => (
                   <CardTile
+                    variant="gallery"
                     name={c.name}
                     suit={c.suit}
                     ready={c.ready}
@@ -58,6 +72,37 @@ const sections: { title: string; sub: string; cards: Card[] }[] = [
 </Layout>
 
 <style>
+  /* The framing the page used to keep on the About page only: what this is,
+     and why most of it is face-down. Same voice and measure as About's lead,
+     so the two pages rhyme. */
+  .masthead {
+    margin: 0 0 clamp(1.3rem, 4.5vw, 3rem);
+  }
+  .masthead__lead {
+    margin: 0;
+    font-size: clamp(1.5rem, 3.6vw, 2.1rem);
+    font-weight: 400;
+    line-height: 1.25;
+    color: var(--ink);
+    max-width: 30ch;
+    text-wrap: balance;
+  }
+  .masthead__sub {
+    margin: 0.7rem 0 0;
+    font-size: var(--fs-base);
+    line-height: 1.55;
+    color: var(--ink-60);
+    max-width: 46ch;
+  }
+  .masthead__status {
+    margin: 1.1rem 0 0;
+    font-size: var(--fs-xs);
+  }
+  /* keep "2 of 78 revealed" whole — the count breaking across lines reads
+     as two unrelated numbers */
+  .masthead__count { white-space: nowrap; }
+  .masthead__status strong { color: var(--house); font-weight: inherit; }
+
   .gallery {
     display: grid;
     grid-template-columns: 132px 1fr;
@@ -81,14 +126,19 @@ const sections: { title: string; sub: string; cards: Card[] }[] = [
   }
   .section-head__count { line-height: 1; color: var(--ink-60); }
 
+  /* 126px, not the 132px the tiles actually render at: at 1440 the main
+     column is 895.4px and six 132px tracks plus five 20.8px gaps need 896 —
+     short by half a pixel, so auto-fill dropped to five columns and stretched
+     every tile. The lower floor buys the sixth column back; seven still can't
+     fit, so tiles land at ~132px anyway. */
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(126px, 1fr));
     gap: clamp(0.8rem, 1.6vw, 1.3rem);
   }
 
   @media (max-width: 680px) {
-    .gallery { grid-template-columns: 1fr; }
-    .grid { grid-template-columns: repeat(auto-fill, minmax(108px, 1fr)); }
+    .gallery { grid-template-columns: 1fr; gap: 1.4rem; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); }
   }
 </style>

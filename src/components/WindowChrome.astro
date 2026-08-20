@@ -132,8 +132,13 @@ const hasFooter = Astro.slots.has('footer');
     flex-direction: column;
   }
 
+  /* The tagline is the only thing in the chrome that says what this is, and
+     phones are where shared links land — so the version string gives up its
+     place instead, and the tagline drops to its own line under the wordmark. */
   @media (max-width: 640px) {
-    .brand__sep, .brand__tag { display: none; }
+    .brand { flex-wrap: wrap; row-gap: 0.1rem; }
+    .brand__sep, .brand__ver { display: none; }
+    .brand__tag { flex-basis: 100%; white-space: normal; }
   }
   /* on small screens, let the tall window grow and the page scroll normally */
   @media (max-width: 720px) {
